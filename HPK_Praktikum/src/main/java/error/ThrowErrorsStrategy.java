@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 
-public class ErrorStrategy extends DefaultErrorStrategy {
+public class ThrowErrorsStrategy extends DefaultErrorStrategy {
 
 	@Override
 	public void recover(Parser recognizer, RecognitionException e) {
@@ -34,7 +34,7 @@ public class ErrorStrategy extends DefaultErrorStrategy {
 	}
 	
 	private String createMsg(Token token) {
-		return "IllegalArgumentException: The offending token is " + token;
+		return " " + token.getText();
 	}
 	
 }

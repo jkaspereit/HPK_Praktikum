@@ -18,12 +18,11 @@ import antlr.LibExprParser.ParensContext;
 import antlr.LibExprParser.PrintExprContext;
 
 /**
- * This class provides an empty implementation of {@link LibExprVisitor}, which
- * can be extended to create a visitor which only needs to handle a subset of
- * the available methods.
+ * This class provides an implementation of {@link LibExprVisitor}, which
+ * is extended to create a visitor which handles a subset of the available methods.
  *
- * @param <T> The return type of the visit operation. Use {@link Void} for
- *        operations with no return type.
+ * @param <Double> The return type of the visit operation. 
+ * 
  */
 
 public class BaseVisitor extends LibExprBaseVisitor<Double> {

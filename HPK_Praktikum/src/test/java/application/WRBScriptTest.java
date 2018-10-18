@@ -2,6 +2,7 @@ package application;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,61 +64,82 @@ public class WRBScriptTest {
 
     @Test
     public final void testPlus() throws Exception {
-        String task = "2+3\n";
+        String task = "2+3";
         assertEquals(5.0, script.parse(task), eps);
     }
 
     @Test
     public final void testMinus() throws Exception {
-        String task = "2 - 6\n";
+        String task = "2 - 6";
         assertEquals(-4.0, script.parse(task), eps);
     }
 
     @Test
     public final void testConstant() throws Exception {
-        String task = "0815\n 4711\n";
+        String task = "0815; 4711";
         assertEquals(4711.0, script.parse(task), eps);
     }
 
     @Test
     public final void testSigned() throws Exception {
-        String task = "-2 + 6\n";
+        String task = "-2 + 6";
         assertEquals(4.0, script.parse(task), eps);
     }
 
     @Test
     public void testSignedSecondArg() throws Exception {
-        String task = "2 + -6\n";
+        String task = "2 + -6";
         assertEquals(-4.0, script.parse(task), eps);
     }
 
     @Test
     public final void testMixedFloat() throws Exception {
-        String task = "2.0/3 - 5.2*4\n";
+        String task = "2.0/3 - 5.2*4";
         assertEquals(2. / 3.0 - 5.2 * 4, script.parse(task), eps);
     }
 
     @Test
     public final void testLongAdd() throws Exception {
-        String task = "2.0 + 3 + 4.0 + 5\n";
+        String task = "2.0 + 3 + 4.0 + 5";
         assertEquals(14, script.parse(task), eps);
     }
 
     @Test
     public final void testLongMult() throws Exception {
-        String task = "2 * 3.0 * 4 * 5.000\n";
+        String task = "2 * 3.0 * 4 * 5.000";
         assertEquals(120, script.parse(task), eps);
     }
 
     @Test
     public final void testLongMixed() throws Exception {
-        String task = "2.0 * 3 * 4.0 + 5 + 6.0 / 3\n";
+        String task = "2.0 * 3 * 4.0 + 5 + 6.0 / 3";
         assertEquals(31, script.parse(task), eps);
     }
 
     @Test
     public void testParseBracket() throws Exception {
-        String task = " 2*(4.0 + 3)\n";
+        String task = " 2*(4.0 + 3)";
         assertEquals(14, script.parse(task), eps);
     }
+    
+    @Test
+    public void testEmptyExpr() throws Exception {
+        String task = ";;;";
+        assertNull(script.parse(task));
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testEmptyInput() throws Exception {
+        String task = "";
+        assertEquals(14, script.parse(task), eps);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public final void testIllegalArgument() throws Exception {
+    	String task = "5 + 4 .";
+        script.parse(task);
+    }
+    
+
+    
 }

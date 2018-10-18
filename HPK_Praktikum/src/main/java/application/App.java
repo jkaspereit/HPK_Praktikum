@@ -9,8 +9,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import antlr.BaseVisitor;
 import antlr.LibExprLexer;
 import antlr.LibExprParser;
-import error.ErrorListener;
-import error.ErrorStrategy;
+import error.IllegalArgumentExceptionListener;
+import error.ThrowErrorsStrategy;
 
 
 /**
@@ -36,13 +36,13 @@ public class App
     		
     	}
     	
-    	ANTLRInputStream input = new ANTLRInputStream("234 - -234");
+    	ANTLRInputStream input = new ANTLRInputStream("5+4=");
     	LibExprLexer lexer = new testLexer(input);
     	CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
     	LibExprParser parser = new LibExprParser(commonTokenStream);
     	parser.removeErrorListeners();
-    	parser.addErrorListener(new ErrorListener());
-    	parser.setErrorHandler(new ErrorStrategy());
+    	parser.addErrorListener(new IllegalArgumentExceptionListener());
+    	parser.setErrorHandler(new ThrowErrorsStrategy());
     	ParseTree tree = parser.prog();
     	
     	BaseVisitor bv = new BaseVisitor();

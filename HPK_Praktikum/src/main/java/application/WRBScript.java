@@ -14,8 +14,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import antlr.BaseVisitor;
 import antlr.LibExprLexer;
 import antlr.LibExprParser;
-import error.ErrorListener;
-import error.ErrorStrategy;
+import error.IllegalArgumentExceptionListener;
+import error.ThrowErrorsStrategy;
 import util.Function;
 
 public class WRBScript implements Script{
@@ -28,6 +28,9 @@ public class WRBScript implements Script{
 	
 	boolean allowAutoCorrection;
 	
+	/**
+	 * Default - Constructor
+	 */
 	public WRBScript() {
 		memoryFunctions = new HashMap<>();
 		memoryVariables = new HashMap<>();
@@ -35,6 +38,11 @@ public class WRBScript implements Script{
 		allowAutoCorrection = false;
 	}
 	
+	/**
+	 * WRBScript Constructor 
+	 * 
+	 * @param allowAutoCorrection Defines whether autoCorrection is allowed or not. 
+	 */
 	public WRBScript(boolean allowAutoCorrection) {
 		memoryFunctions = new HashMap<>();
 		memoryVariables = new HashMap<>();
@@ -43,7 +51,7 @@ public class WRBScript implements Script{
 	}
 	
 	@Override
-	public double parse(String definition) {
+	public Double parse(String definition) {
 		ParseTree tree = setUp(definition);
 		visitor.visit(tree);
 		return visitor.getResult();
@@ -92,7 +100,12 @@ public class WRBScript implements Script{
 		memoryVariables.put(name, value);
 	}
 	
-	
+	/**
+	 * Creates the Parse-Tree for the given input. 
+	 * 
+	 * @param inputString input 
+	 * @return {@link ParseTree}
+	 */
 	private ParseTree setUp(String inputString) {
     	LibExprLexer lexer = createLexer(inputString);
     	LibExprParser parser = createParser(lexer);
@@ -100,12 +113,19 @@ public class WRBScript implements Script{
     	return parser.prog();
 	}
 	
+	/**
+	 * Creates a lexer for the given input. 
+	 * 
+	 * @param inputString input
+	 * @return {@link LibExprLexer}
+	 */
 	private LibExprLexer createLexer(String inputString) {
     	ANTLRInputStream input = new ANTLRInputStream(inputString);
     	LibExprLexer lexer;
     	if(allowAutoCorrection) {
     		lexer = new LibExprLexer(input);
-    	} else {
+    	} else { // no auto correction allowed.
+    		// overwrite recover method from LibExpLexer
         	class Lexer extends LibExprLexer{
 
     			public Lexer(CharStream input) {
@@ -119,18 +139,25 @@ public class WRBScript implements Script{
     			}
         		
         	}
-        	lexer = new LibExprLexer(input);
+        	// lexer without auto correction 
+        	lexer = new Lexer(input);
     	}
     	return lexer;
 	}
 	
+	/**
+	 * Creates a parser based on the given lexer.
+	 * 
+	 * @param lexer {@link LibExprLexer}
+	 * @return {@link LibExprParser}
+	 */
 	private LibExprParser createParser(LibExprLexer lexer) {
     	CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
     	LibExprParser parser = new LibExprParser(commonTokenStream);
-    	if(!allowAutoCorrection) {
-        	parser.removeErrorListeners();
-        	parser.addErrorListener(new ErrorListener());
-        	parser.setErrorHandler(new ErrorStrategy());
+    	if(!allowAutoCorrection) { // auto correction not allowed
+        	parser.removeErrorListeners(); // remove default listeners 
+        	parser.addErrorListener(new IllegalArgumentExceptionListener()); // add listener for illegal arguments 
+        	parser.setErrorHandler(new ThrowErrorsStrategy()); // error handling 
     	}
 		return parser;
 	}

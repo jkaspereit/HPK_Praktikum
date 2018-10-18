@@ -50,7 +50,7 @@ public interface Script {
      * @param definition of the script expression(s) as a String
      * @return the result of the parsed evaluation
      */
-    double parse(String definition);
+    Double parse(String definition);
 
     /**
      * Parse the InputStream into an internal representation (e.g. as AST) and
