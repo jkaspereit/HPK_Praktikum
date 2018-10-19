@@ -35,7 +35,7 @@ public class WRBScript implements Script{
 		memoryFunctions = new HashMap<>();
 		memoryVariables = new HashMap<>();
 		visitor = new BaseVisitor();
-		allowAutoCorrection = false;
+		allowAutoCorrection = true;
 	}
 	
 	/**

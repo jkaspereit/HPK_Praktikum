@@ -120,7 +120,7 @@ public class WRBScriptTest {
     public void testParseBracket() throws Exception {
         String task = " 2*(4.0 + 3)";
         assertEquals(14, script.parse(task), eps);
-    }
+    }                                      
     
     @Test
     public void testEmptyExpr() throws Exception {

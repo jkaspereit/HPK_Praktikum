@@ -36,7 +36,7 @@ public class App
     		
     	}
     	
-    	ANTLRInputStream input = new ANTLRInputStream("5+4=");
+    	ANTLRInputStream input = new ANTLRInputStream("5+4*2");
     	LibExprLexer lexer = new testLexer(input);
     	CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
     	LibExprParser parser = new LibExprParser(commonTokenStream);
@@ -47,6 +47,7 @@ public class App
     	
     	BaseVisitor bv = new BaseVisitor();
     	bv.visit(tree);
+    	System.out.println(bv.getResult());
     	
     	System.out.println(tree.toStringTree(parser));
     	
