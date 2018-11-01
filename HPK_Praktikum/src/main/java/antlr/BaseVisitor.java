@@ -9,13 +9,15 @@ import antlr.LibExprBaseVisitor;
 import antlr.LibExprParser;
 import antlr.LibExprVisitor;
 import antlr.LibExprParser.AddSubContext;
-import antlr.LibExprParser.AssignContext;
+import antlr.LibExprParser.AssignDeclarationContext;
 import antlr.LibExprParser.DoubleContext;
+import antlr.LibExprParser.Expo10Context;
 import antlr.LibExprParser.IdContext;
 import antlr.LibExprParser.IntContext;
 import antlr.LibExprParser.MulDivContext;
 import antlr.LibExprParser.ParensContext;
 import antlr.LibExprParser.PrintExprContext;
+import antlr.LibExprParser.ProgContext;
 
 /**
  * This class provides an implementation of {@link LibExprVisitor}, which
@@ -35,18 +37,27 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	public Double getResult() {
 		return result;
 	}
+	
+	@Override
+	public Double visitProg(ProgContext ctx) {
+		ctx.getText().isEmpty();
+		if(ctx.getText().isEmpty()) {
+			throw new IllegalArgumentException("shit");
+		}
+		return super.visitProg(ctx);
+	}
 
 	/**
 	 * ID '=' expr NEWLINE
 	 */
 	@Override
-	public Double visitAssign(AssignContext ctx) {
+	public Double visitAssignDeclaration(AssignDeclarationContext ctx) {
 		String id = ctx.ID().getText(); // ID
 		double value = visit(ctx.expr()); // Value
 		memory.put(id, value); // save in memory
 		return value;
 	}
-
+	
 	/**
 	 * expr NEWLINE
 	 */
@@ -84,6 +95,16 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 		return 0.0; // dummy, id not found
 	}
 
+	
+	@Override
+	public Double visitExpo10(Expo10Context ctx) {
+		Double value = Double.valueOf(ctx.DOUBLE().getText());
+		Double exponent = Double.valueOf(ctx.INT().getText());
+		if(exponent < 0 ) return value / (Math.pow(10, exponent*-1));
+		// op has to be ADD 
+		return value * (Math.pow(10, exponent)); 
+	}
+	
 	/**
 	 * expr op=('*'|'/') expr
 	 */

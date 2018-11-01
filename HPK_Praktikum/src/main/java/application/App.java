@@ -36,8 +36,9 @@ public class App
     		
     	}
     	
-    	ANTLRInputStream input = new ANTLRInputStream("5+4*2");
+    	ANTLRInputStream input = new ANTLRInputStream("");
     	LibExprLexer lexer = new testLexer(input);
+    	lexer.removeErrorListeners();
     	CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
     	LibExprParser parser = new LibExprParser(commonTokenStream);
     	parser.removeErrorListeners();

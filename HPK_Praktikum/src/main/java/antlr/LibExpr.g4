@@ -7,19 +7,22 @@ NEWLINE: '\r'? '\n' -> skip;
 WS: [ \t]+ -> skip;
 END_EXPR: ';';
 
-prog: stat+;
+prog: stat* END_EXPR*
+	| stat END_EXPR? ')' {notifyErrorListeners("Too many parentheses");}	
+	;
 
-stat: expr END_EXPR?			#printExpr
-	|ID '=' expr END_EXPR?		#assign
-	|END_EXPR					#blank					
+stat: expr 							#printExpr
+	|ID '=' expr 					#assignDeclaration
+	|ID '(' expr (',' expr)* ')'	#assignFunction				
 	;	
 
-expr: expr op=('*'|'/') expr	#MulDiv
-	| expr op=('+'|'-') expr	#AddSub
-	| INT						#int
-	| DOUBLE					#double
-	| ID						#id
-	| '(' expr ')'				#parens
+expr: DOUBLE 'e' INT				#expo10	
+	| expr op=('*'|'/') expr		#MulDiv
+	| expr op=('+'|'-') expr		#AddSub
+	| INT							#int
+	| DOUBLE						#double
+	| ID							#id
+	| '(' expr ')'					#parens
 	;
 	
 MUL: '*';

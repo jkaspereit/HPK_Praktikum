@@ -6,7 +6,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import antlr.LibExprListener;
 import antlr.LibExprParser;
+import antlr.LibExprParser.AssignDeclarationContext;
+import antlr.LibExprParser.AssignFunctionContext;
 import antlr.LibExprParser.DoubleContext;
+import antlr.LibExprParser.Expo10Context;
 
 public class BaseListener implements LibExprListener {
 	/**
@@ -33,18 +36,6 @@ public class BaseListener implements LibExprListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	 public void exitPrintExpr(LibExprParser.PrintExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	 public void enterAssign(LibExprParser.AssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	 public void exitAssign(LibExprParser.AssignContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -149,6 +140,36 @@ public class BaseListener implements LibExprListener {
 	}
 	@Override
 	public void exitDouble(DoubleContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enterAssignDeclaration(AssignDeclarationContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void exitAssignDeclaration(AssignDeclarationContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enterAssignFunction(AssignFunctionContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void exitAssignFunction(AssignFunctionContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enterExpo10(Expo10Context ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void exitExpo10(Expo10Context ctx) {
 		// TODO Auto-generated method stub
 		
 	}

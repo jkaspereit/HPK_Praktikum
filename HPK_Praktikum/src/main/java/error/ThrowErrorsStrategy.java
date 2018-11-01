@@ -1,6 +1,7 @@
 package error;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.FailedPredicateException;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.NoViableAltException;
 import org.antlr.v4.runtime.Parser;
@@ -32,6 +33,22 @@ public class ThrowErrorsStrategy extends DefaultErrorStrategy {
 	protected void reportInputMismatch(Parser recognizer, InputMismatchException e) {
 		recognizer.notifyErrorListeners(createMsg(e.getOffendingToken()));
 	}
+	
+	@Override
+	public void reportError(Parser recognizer, RecognitionException e) {
+		recognizer.notifyErrorListeners(createMsg(e.getOffendingToken()));
+	}
+	
+	@Override
+	protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e) {
+		recognizer.notifyErrorListeners(createMsg(e.getOffendingToken()));
+	}
+	
+	@Override
+	protected void reportMissingToken(Parser recognizer) {
+		recognizer.notifyErrorListeners("missing token");
+	}
+	
 	
 	private String createMsg(Token token) {
 		return " " + token.getText();
