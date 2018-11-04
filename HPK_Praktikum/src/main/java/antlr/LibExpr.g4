@@ -21,9 +21,9 @@ stat: expr 									#printExpr
 formalParameters: '(' ID (',' ID)* ')'
 	;
 
-expr: DOUBLE 'e'SUB? INT					#expo10	
+expr: DOUBLE 'e'op=('+'|'-')? INT					#expo10	
 	| '-' expr								#negExpr
-	| expr ('^'|'**') expr					#pow
+	| <assoc=right>expr POW expr			#pow
 	| expr op=('*'|'/') expr				#MulDiv
 	| expr op=('+'|'-') expr				#AddSub
 	| INT									#int
@@ -31,7 +31,6 @@ expr: DOUBLE 'e'SUB? INT					#expo10
 	| ID									#id
 	| ID parameters							#function
 	| '(' expr ')'							#parens
-	| #emptyexpr
 	; 
 
 parameters:  '(' expr (',' expr)* ')';
@@ -40,3 +39,4 @@ MUL: '*';
 DIV: '/';
 ADD: '+';
 SUB: '-';
+POW: ('^'| '**');

@@ -60,7 +60,7 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 		ctx.removeLastChild();
 		if(ctx.getText().endsWith(";")) {
 			//remove ';'
-			ctx.removeLastChild(); // Invisible Statement //TODO puke 
+//			ctx.removeLastChild(); // Invisible Statement //TODO puke 
 			ctx.removeLastChild(); // END_EXPR
 		}
 		if(ctx.getText().isEmpty()) {
@@ -135,7 +135,7 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	@Override
 	public Double visitFunction(FunctionContext ctx) {
 		String id = ctx.ID().getText();
-		double[] args = new double[ctx.parameters().getChildCount()-2]; 
+		double[] args = new double[ctx.parameters().expr().size()]; 
 		int i = 0;
 		for(ExprContext expr:ctx.parameters().expr()) {
 			args[i] = visit(expr);
@@ -153,11 +153,11 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	public Double visitExpo10(Expo10Context ctx) {
 		Double value = Double.valueOf(ctx.DOUBLE().getText());
 		Double exponent = Double.valueOf(ctx.INT().getText());
-		if(ctx.SUB()!=null) {
-			return value / (Math.pow(10, exponent));
+		if(ctx.op == null || ctx.op.getType() == LibExprParser.ADD) {
+			return value * (Math.pow(10, exponent)); 
 		}
-		// op has to be ADD 
-		return value * (Math.pow(10, exponent)); 
+		// op has to be SUB
+		return value / (Math.pow(10, exponent));
 	}
 	
 	/**

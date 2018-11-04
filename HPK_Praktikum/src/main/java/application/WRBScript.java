@@ -2,25 +2,18 @@ package application;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.antlr.runtime.tree.TreeWizard.Visitor;
-import org.antlr.v4.parse.ANTLRParser.element_return;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.LexerNoViableAltException;
-import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.stringtemplate.v4.compiler.CodeGenerator.args_return;
 
 import antlr.BaseVisitor;
 import antlr.LibExprLexer;
 import antlr.LibExprParser;
 import error.IllegalArgumentExceptionListener;
-import error.ThrowErrorsStrategy;
 import util.Function;
 
 public class WRBScript implements Script {
@@ -36,24 +29,25 @@ public class WRBScript implements Script {
 	 */
 	public WRBScript() {
 		memoryFunctions = new HashMap<>();
-		initMathFunctions();
 		memoryVariables = new HashMap<>();
+		initMathFunctions();
 		visitor = new BaseVisitor(this);
 	}
 
 	@Override
 	public Double parse(String definition) {
-		ParseTree tree = setUp(definition);
-		return visit(tree);
+		CharStream stream = CharStreams.fromString(definition);
+		return prog(stream);
+	}
+	
+	@Override
+	public double parse(InputStream defStream) throws IOException {
+		CharStream stream = CharStreams.fromStream(defStream);
+		return prog(stream);
 	}
 	
 	public Double visit(ParseTree tree) { 
 		return visitor.visit(tree);
-	}
-
-	@Override
-	public double parse(InputStream defStream) throws IOException {
-		return parse(defStream.toString());
 	}
 
 	@Override
@@ -93,6 +87,22 @@ public class WRBScript implements Script {
 	public void setVariable(String name, double value) {
 		memoryVariables.put(name, value);
 	}
+	
+	public HashMap<String, Double> getMemoryVariables() {
+		return memoryVariables;
+	}
+	
+	public void setMemoryVariables(HashMap<String, Double> memoryVariables) {
+		this.memoryVariables = memoryVariables;
+	}
+	
+	public HashMap<String, Function> getMemoryFunctions() {
+		return memoryFunctions;
+	}
+	
+	public void setMemoryFunctions(HashMap<String, Function> memoryFunctions) {
+		this.memoryFunctions = memoryFunctions;
+	}
 
 	/**
 	 * Creates the Parse-Tree for the given input.
@@ -100,12 +110,11 @@ public class WRBScript implements Script {
 	 * @param inputString input
 	 * @return {@link ParseTree}
 	 */
-	private ParseTree setUp(String inputString) {
-		LibExprLexer lexer = createLexer(inputString);
+	private double prog(CharStream input) {
+		LibExprLexer lexer = createLexer(input);
 		LibExprParser parser = createParser(lexer);
 		ParseTree tree = parser.prog();
-		System.out.println(tree.toStringTree(parser));
-		return tree;
+		return visit(tree);
 	}
 
 	/**
@@ -114,29 +123,7 @@ public class WRBScript implements Script {
 	 * @param inputString input
 	 * @return {@link LibExprLexer}
 	 */
-	private LibExprLexer createLexer(String inputString) {
-		ANTLRInputStream input = new ANTLRInputStream(inputString);
-//		class Lexer extends LibExprLexer {
-//
-//			public Lexer(CharStream input) {
-//				super(input);
-//				// TODO Auto-generated constructor stub
-//			}
-//
-//			@Override
-//			public void recover(LexerNoViableAltException e) {
-//				throw new IllegalArgumentException(e);
-//			}
-//
-//			@Override
-//			public void recover(RecognitionException re) {
-//				throw new IllegalArgumentException(re);
-//			}
-//
-//		}
-//		LibExprLexer lexer = new Lexer(input);
-//		lexer.removeErrorListeners();
-
+	private LibExprLexer createLexer(CharStream input) {
 		return new LibExprLexer(input);
 	}
 
@@ -155,14 +142,59 @@ public class WRBScript implements Script {
 		return parser;
 	}
 
+	/**
+	 * Initializes mathematical standard functions
+	 */
 	private void initMathFunctions() {
+		// sin cos tan
 		Function sin = (args) -> Math.sin(args[0]); 
 		Function cos = (args) -> Math.cos(args[0]); 
 		Function tan = (args) -> Math.tan(args[0]); 
-		
 		setFunction("sin", sin);
 		setFunction("cos", cos);
 		setFunction("tan", tan);
+		// asin acos atan
+		Function asin = (args) -> Math.asin(args[0]);
+		Function acos = (args) -> Math.acos(args[0]); 
+		Function atan = (args) -> Math.atan(args[0]); 
+		setFunction("asin", asin);
+		setFunction("acos", acos);
+		setFunction("atan", atan);
+		// max min
+		Function max = (args) -> {
+			double result = args[0];
+			for(double arg: args) {
+				if (result < arg) {
+					result = arg;
+				}
+			}
+			return result;
+		};
+		Function min = (args) -> {
+			double result = args[0];
+			for(double arg: args) {
+				if (result > arg) {
+					result = arg;
+				}
+			}
+			return result;
+		};
+		setFunction("max", max);
+		setFunction("min", min);
+		
+	}
+	
+	
+	@Override
+	public Script concat(Script that) {
+		WRBScript concatScript = new WRBScript();
+		HashMap<String, Double> mv = (HashMap<String, Double>) getMemoryVariables().clone(); 
+		mv.putAll(((WRBScript) that).getMemoryVariables());
+		concatScript.setMemoryVariables(mv);
+		HashMap<String, Function> mf = (HashMap<String, Function>) getMemoryFunctions().clone();
+		mf.putAll(((WRBScript) that).getMemoryFunctions());
+		concatScript.setMemoryFunctions(mf);
+		return concatScript;
 	}
 
 }

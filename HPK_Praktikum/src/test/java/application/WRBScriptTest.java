@@ -12,7 +12,7 @@ import org.junit.Test;
 public class WRBScriptTest extends AbstractScriptTest{
 	final double eps = 1.E-8;
     Script script;
-
+ 
     /**
      * @throws java.lang.Exception
      */
@@ -72,7 +72,7 @@ public class WRBScriptTest extends AbstractScriptTest{
         assertEquals(14, script.parse(task), eps);
     }                                      
     
-    @Test
+    @Test (expected = IllegalArgumentException.class)
     public void testEmptyExpr() throws Exception {
         String task = ";;;";
         assertNull(script.parse(task));

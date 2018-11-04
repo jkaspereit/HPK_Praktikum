@@ -614,7 +614,7 @@ public abstract class AbstractScriptTest {
             script.setVariable("y", y);
             script.setVariable("z", z);
 
-            result = script.parse("x**y** z ");
+            result = script.parse("x**y** z");
             assertEquals(expected, result, EPS);
             result = script.parse("x^ y ^ z");
             assertEquals(expected, result, EPS);
