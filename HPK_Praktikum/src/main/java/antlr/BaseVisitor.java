@@ -1,23 +1,32 @@
 package antlr;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import antlr.LibExprBaseVisitor;
 import antlr.LibExprParser;
-import antlr.LibExprVisitor;
+import antlr.LibExprVisitor;import util.Function;
+import util.WRBFunction;
 import antlr.LibExprParser.AddSubContext;
 import antlr.LibExprParser.AssignDeclarationContext;
+import antlr.LibExprParser.AssignFunctionContext;
 import antlr.LibExprParser.DoubleContext;
 import antlr.LibExprParser.Expo10Context;
+import antlr.LibExprParser.ExprContext;
+import antlr.LibExprParser.FunctionContext;
 import antlr.LibExprParser.IdContext;
 import antlr.LibExprParser.IntContext;
 import antlr.LibExprParser.MulDivContext;
+import antlr.LibExprParser.ParametersContext;
 import antlr.LibExprParser.ParensContext;
 import antlr.LibExprParser.PrintExprContext;
 import antlr.LibExprParser.ProgContext;
+import application.WRBScript;
 
 /**
  * This class provides an implementation of {@link LibExprVisitor}, which
@@ -29,13 +38,17 @@ import antlr.LibExprParser.ProgContext;
 
 public class BaseVisitor extends LibExprBaseVisitor<Double> {
 
-	// Memory
-	private Map<String, Double> memory = new HashMap<String, Double>();
+	WRBScript script;	
+	
 	// Result of an evaluation
 	private Double result;
 	// getter
 	public Double getResult() {
 		return result;
+	}
+	
+	public BaseVisitor(WRBScript script) {
+		this.script = script;
 	}
 	
 	@Override
@@ -54,18 +67,20 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	public Double visitAssignDeclaration(AssignDeclarationContext ctx) {
 		String id = ctx.ID().getText(); // ID
 		double value = visit(ctx.expr()); // Value
-		memory.put(id, value); // save in memory
+		script.setVariable(id, value);// save in memory
 		return value;
 	}
+	
+
 	
 	/**
 	 * expr NEWLINE
 	 */
 	@Override
 	public Double visitPrintExpr(PrintExprContext ctx) {
-		Double value = visit(ctx.expr()); // evaluate the expr child
-		result = value;
-		return 0.0; // dummy Value
+		Double result = visit(ctx.expr()); // evaluate the expr child
+		//result = value;
+		return result; // dummy Value
 	}
 
 	/**
@@ -90,12 +105,41 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	@Override
 	public Double visitId(IdContext ctx) {
 		String id = ctx.ID().getText();
-		if (memory.containsKey(id))
-			return memory.get(id);
-		return 0.0; // dummy, id not found
+		return script.getVariable(id);
+	}
+
+	@Override
+	public Double visitAssignFunction(AssignFunctionContext ctx) {
+		String id = ctx.ID().getText();
+		List<String> formalParameters = new ArrayList<String>();
+		for(TerminalNode node : ctx.formalParameters().ID()) {
+			formalParameters.add(node.getText());
+		}
+		ParseTree parseTree = ctx.expr();
+		script.setFunction(id, new WRBFunction(script,formalParameters,parseTree));
+		return 0.0;
+	}
+	
+	/**
+	 * FUNCTION
+	 */
+	@Override
+	public Double visitFunction(FunctionContext ctx) {
+		String id = ctx.ID().getText();
+		double[] args = new double[ctx.parameters().getChildCount()-2]; 
+		int i = 0;
+		for(ExprContext expr:ctx.parameters().expr()) {
+			args[i] = visit(expr);
+			i++;
+		}
+		double result = script.getFunction(id).eval(args);
+		return result;
 	}
 
 	
+	/**
+	 * EXPO10
+	 */
 	@Override
 	public Double visitExpo10(Expo10Context ctx) {
 		Double value = Double.valueOf(ctx.DOUBLE().getText());
@@ -140,4 +184,5 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	public Double visitParens(ParensContext ctx) {
 		return visit(ctx.expr());
 	}
+	
 }
