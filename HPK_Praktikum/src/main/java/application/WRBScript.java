@@ -31,8 +31,6 @@ public class WRBScript implements Script {
 
 	BaseVisitor visitor;
 
-	boolean allowAutoCorrection;
-
 	/**
 	 * Default - Constructor
 	 */
@@ -41,20 +39,6 @@ public class WRBScript implements Script {
 		initMathFunctions();
 		memoryVariables = new HashMap<>();
 		visitor = new BaseVisitor(this);
-		allowAutoCorrection = true;
-	}
-
-	/**
-	 * WRBScript Constructor
-	 * 
-	 * @param allowAutoCorrection Defines whether autoCorrection is allowed or not.
-	 */
-	public WRBScript(boolean allowAutoCorrection) {
-		memoryFunctions = new HashMap<>();
-		initMathFunctions();
-		memoryVariables = new HashMap<>();
-		visitor = new BaseVisitor(this);
-		this.allowAutoCorrection = allowAutoCorrection;
 	}
 
 	@Override
@@ -63,7 +47,7 @@ public class WRBScript implements Script {
 		return visit(tree);
 	}
 	
-	public Double visit(ParseTree tree) {
+	public Double visit(ParseTree tree) { 
 		return visitor.visit(tree);
 	}
 
@@ -119,8 +103,9 @@ public class WRBScript implements Script {
 	private ParseTree setUp(String inputString) {
 		LibExprLexer lexer = createLexer(inputString);
 		LibExprParser parser = createParser(lexer);
-
-		return parser.prog();
+		ParseTree tree = parser.prog();
+		System.out.println(tree.toStringTree(parser));
+		return tree;
 	}
 
 	/**
@@ -131,34 +116,28 @@ public class WRBScript implements Script {
 	 */
 	private LibExprLexer createLexer(String inputString) {
 		ANTLRInputStream input = new ANTLRInputStream(inputString);
-		LibExprLexer lexer;
-		if (allowAutoCorrection) {
-			lexer = new LibExprLexer(input);
-		} else { // no auto correction allowed.
-			// overwrite recover method from LibExpLexer
-			class Lexer extends LibExprLexer {
+//		class Lexer extends LibExprLexer {
+//
+//			public Lexer(CharStream input) {
+//				super(input);
+//				// TODO Auto-generated constructor stub
+//			}
+//
+//			@Override
+//			public void recover(LexerNoViableAltException e) {
+//				throw new IllegalArgumentException(e);
+//			}
+//
+//			@Override
+//			public void recover(RecognitionException re) {
+//				throw new IllegalArgumentException(re);
+//			}
+//
+//		}
+//		LibExprLexer lexer = new Lexer(input);
+//		lexer.removeErrorListeners();
 
-				public Lexer(CharStream input) {
-					super(input);
-					// TODO Auto-generated constructor stub
-				}
-
-				@Override
-				public void recover(LexerNoViableAltException e) {
-					throw new IllegalArgumentException(e);
-				}
-
-				@Override
-				public void recover(RecognitionException re) {
-					throw new IllegalArgumentException(re);
-				}
-
-			}
-			// lexer without auto correction
-			lexer = new Lexer(input);
-			lexer.removeErrorListeners();
-		}
-		return lexer;
+		return new LibExprLexer(input);
 	}
 
 	/**
@@ -170,11 +149,9 @@ public class WRBScript implements Script {
 	private LibExprParser createParser(LibExprLexer lexer) {
 		CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
 		LibExprParser parser = new LibExprParser(commonTokenStream);
-		if (!allowAutoCorrection) { // auto correction not allowed
-			parser.removeErrorListeners(); // remove default listeners
-			parser.addErrorListener(new IllegalArgumentExceptionListener()); // add listener for illegal arguments
-			parser.setErrorHandler(new ThrowErrorsStrategy()); // error handling
-		}
+//		parser.removeErrorListeners();
+		parser.addErrorListener(new IllegalArgumentExceptionListener());
+//		parser.setErrorHandler(new ThrowErrorsStrategy());
 		return parser;
 	}
 

@@ -16,27 +16,30 @@ public class IllegalArgumentExceptionListener extends BaseErrorListener{
 	@Override
 	public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
 			String msg, RecognitionException e) {
+//		super.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 		List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
-		Collections.reverse(stack);
+		Collections.reverse(stack); 
 		System.err.println("IllegalArgumentException: In line " + line + ":" + charPositionInLine + " " + msg);
 		throw new IllegalArgumentException(e);
 	}
+	
 		
-	@Override
-	public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact,
-			BitSet ambigAlts, ATNConfigSet configs) {
-		throw new IllegalArgumentException();
-	}
+//	@Override
+//	public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact,
+//			BitSet ambigAlts, ATNConfigSet configs) {
+//		super.reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs);
+//		throw new IllegalArgumentException();
+//	}
+//	
+//	@Override
+//	public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction,
+//			ATNConfigSet configs) {
+//		throw new IllegalArgumentException();
+//	}
 	
-	@Override
-	public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction,
-			ATNConfigSet configs) {
-		throw new IllegalArgumentException();
-	}
-	
-	@Override
-	public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
-			BitSet conflictingAlts, ATNConfigSet configs) {
-		throw new IllegalArgumentException();
-	}
+//	@Override
+//	public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+//			BitSet conflictingAlts, ATNConfigSet configs) {
+//		throw new IllegalArgumentException();
+//	}
 }

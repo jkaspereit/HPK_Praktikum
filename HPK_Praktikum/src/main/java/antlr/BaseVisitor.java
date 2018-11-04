@@ -22,10 +22,13 @@ import antlr.LibExprParser.FunctionContext;
 import antlr.LibExprParser.IdContext;
 import antlr.LibExprParser.IntContext;
 import antlr.LibExprParser.MulDivContext;
+import antlr.LibExprParser.NegExprContext;
 import antlr.LibExprParser.ParametersContext;
 import antlr.LibExprParser.ParensContext;
+import antlr.LibExprParser.PowContext;
 import antlr.LibExprParser.PrintExprContext;
 import antlr.LibExprParser.ProgContext;
+import antlr.LibExprParser.StatContext;
 import application.WRBScript;
 
 /**
@@ -53,7 +56,13 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	
 	@Override
 	public Double visitProg(ProgContext ctx) {
-		ctx.getText().isEmpty();
+		// Remove EOF 
+		ctx.removeLastChild();
+		if(ctx.getText().endsWith(";")) {
+			//remove ';'
+			ctx.removeLastChild(); // Invisible Statement //TODO puke 
+			ctx.removeLastChild(); // END_EXPR
+		}
 		if(ctx.getText().isEmpty()) {
 			throw new IllegalArgumentException("shit");
 		}
@@ -144,7 +153,9 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 	public Double visitExpo10(Expo10Context ctx) {
 		Double value = Double.valueOf(ctx.DOUBLE().getText());
 		Double exponent = Double.valueOf(ctx.INT().getText());
-		if(exponent < 0 ) return value / (Math.pow(10, exponent*-1));
+		if(ctx.SUB()!=null) {
+			return value / (Math.pow(10, exponent));
+		}
 		// op has to be ADD 
 		return value * (Math.pow(10, exponent)); 
 	}
@@ -175,6 +186,22 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 			return left + right;
 		//	has to be subtraction 
 		return left - right;
+	}
+	
+	/**
+	 * -expr
+	 */
+	@Override
+	public Double visitNegExpr(NegExprContext ctx) {
+		Double resultExpr = visit(ctx.expr());
+		return resultExpr*-1;
+	}
+	
+	@Override
+	public Double visitPow(PowContext ctx) {
+		double left = visit(ctx.expr(0)); // get value of left subexpression
+		double right = visit(ctx.expr(1)); // get value of right subexpression
+		return Math.pow(left, right);
 	}
 
 	/**

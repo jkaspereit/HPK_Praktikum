@@ -39,24 +39,12 @@ public class App {
 			}
 
 		}
+		String tast = "((((-2 + 5)+0)+0)*1)";
+		
+        Script script = new WRBScript();
+        
+        
+        System.out.println(script.parse(tast));
 
-		String task1 = "a = 5; f(y)=y*y";
-        String task2 = "a = 4; f(z)=2*z";
-        Script script = new WRBScript(false), script2 = new WRBScript(false), script3;
-        script.parse(task1);
-        script2.parse(task2);
-        System.out.println("Expected :  25.0 VALUE: " + script.getFunction("f").eval(script.getVariable("a")));
-        System.out.println("Expected :  08.0 VALUE: " + script2.getFunction("f").eval(script2.getVariable("a")));
-        System.out.println("Expected :  16.0 VALUE: " + script.getFunction("f").eval(script2.getVariable("a")));
-        System.out.println("Expected :  10.0 VALUE: " + script2.getFunction("f").eval(script.getVariable("a")));
-        script3 = script.concat(script2);
-
-        System.out.println("Expected s2 a : " + (script2.getVariable("a") + " VALUE: " + script3.getVariable("a")));
-        System.out.println("Expected : 08.0 " + script3.getFunction("f").eval(script3.getVariable("a")));
-
-//	Listener
-//    	parser.addParseListener(new LibExprBaseListener());
-//    	ParseTree tree = parser.prog();
-//    	System.out.println(tree.toStringTree(parser));
 	}
 }

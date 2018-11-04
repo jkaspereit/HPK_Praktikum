@@ -403,7 +403,7 @@ public abstract class AbstractScriptTest {
     @Test
     public final void testTinyMinus() throws Exception {
         String task = "2.0e-5 - 3.0e1";
-        assertEquals( -29.99998, script.parse(task), EPS);
+        assertEquals( -29.99998, script.parse(task), EPS); 
     }
 
     @Test
@@ -811,8 +811,8 @@ public abstract class AbstractScriptTest {
 
     @Test
     public final void testConcatScripts() throws Exception {
-        String task1 = "a = 5; f(y)=y*y;";
-        String task2 = "a = 4; f(z)=2*z;";
+        String task1 = "a = 5; f(y)=y*y";
+        String task2 = "a = 4; f(z)=2*z";
         Script script1 = script, script2 = getScript(), script3;
         assertTrue("scripts not independend", script1!=script2);
         assertNotSame("scripts are equal", script1, script2);

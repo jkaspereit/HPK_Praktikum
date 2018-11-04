@@ -28,7 +28,7 @@ public class WRBScriptTest extends AbstractScriptTest{
      * @return script implementation
      */
     protected Script getScript() {
-        return new WRBScript(false);
+        return new WRBScript();
     }
 
     /**
