@@ -1,9 +1,13 @@
 grammar LibExpr;
 
+fragment LETTER : [a-zA-Z];
+fragment DIGIT : [0-9];
+
+E: 'e' INT;
 WS: [ \t]+ -> skip;
-ID : [a-zA-Z]+;
-INT: [0-9]+;
-DOUBLE: [0-9]+ '.' [0-9]+;
+ID : LETTER (LETTER | INT)*;
+INT: DIGIT+;
+DOUBLE: DIGIT* '.' DIGIT+;
 NEWLINE: '\r'? '\n' -> skip;
 END_EXPR: ';';
 
@@ -21,7 +25,8 @@ stat: expr 									#printExpr
 formalParameters: '(' ID (',' ID)* ')'
 	;
 
-expr: DOUBLE 'e'op=('+'|'-')? INT					#expo10	
+expr: DOUBLE 'e' op=('+'|'-') INT			#expo10	
+	| DOUBLE E								#expo10short
 	| '-' expr								#negExpr
 	| <assoc=right>expr POW expr			#pow
 	| expr op=('*'|'/') expr				#MulDiv

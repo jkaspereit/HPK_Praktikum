@@ -36,6 +36,9 @@ public class WRBScript implements Script {
 
 	@Override
 	public Double parse(String definition) {
+		if(definition.isEmpty()) {
+			throw new IllegalArgumentException("IllegalArgumentException: Empty input."); 
+		}
 		CharStream stream = CharStreams.fromString(definition);
 		return prog(stream);
 	}
@@ -160,6 +163,33 @@ public class WRBScript implements Script {
 		setFunction("asin", asin);
 		setFunction("acos", acos);
 		setFunction("atan", atan);
+		// sinh cosh tanh
+		Function sinh = (args) -> Math.sinh(args[0]);
+		Function cosh = (args) -> Math.cosh(args[0]);
+		Function tanh = (args) -> Math.tanh(args[0]); 
+		setFunction("sinh", sinh);
+		setFunction("cosh", cosh);
+		setFunction("tanh", tanh);
+		// abs exp pow sqrt
+		Function abs = (args) -> Math.abs(args[0]);
+		Function exp = (args) -> Math.exp(args[0]);
+		Function pow = (args) -> Math.pow(args[0], args[1]);
+		Function sqrt = (args) -> Math.sqrt(args[0]);
+		setFunction("abs", abs);
+		setFunction("exp", exp);
+		setFunction("pow", pow);
+		setFunction("sqrt", sqrt);
+		// logartihmus 
+		Function log2 = (args) -> Math.log(args[0])/Math.log(2);
+		Function log10 = (args) -> Math.log10(args[0]);
+		Function logE = (args) -> Math.log(args[0]);
+		setFunction("log2", log2);
+		setFunction("lb", log2); // alias
+		setFunction("ld", log2); // alias
+		setFunction("log10", log10);
+		setFunction("log", log10); // alias
+		setFunction("logE", logE);
+		setFunction("ln", logE);
 		// max min
 		Function max = (args) -> {
 			double result = args[0];
