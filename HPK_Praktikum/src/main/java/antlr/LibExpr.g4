@@ -17,10 +17,14 @@ prog: (stat END_EXPR)* stat? EOF
 
 
 
-stat: expr 									#printExpr
-	|ID '=' expr 							#assignDeclaration
-	|ID  formalParameters '=' expr			#assignFunction				
+stat: printExpr
+	| assignDeclaration
+	| assignFunction		
 	;
+	
+printExpr: expr;
+assignDeclaration: ID '=' expr ;
+assignFunction: ID  formalParameters '=' expr;
 	
 formalParameters: '(' ID (',' ID)* ')'
 	;

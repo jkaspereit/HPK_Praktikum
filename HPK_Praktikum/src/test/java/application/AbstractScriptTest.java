@@ -1265,6 +1265,12 @@ public abstract class AbstractScriptTest {
             assertEquals(x, it.eval(x), EPS);
         }
     }
+    
+    @Test
+    public void testSignedSecondArg1() throws Exception {
+        String task = "2 + -6";
+        assertEquals(-4.0, script.parse(task), EPS);
+    }
 
     @Test
     public final void testMathMixedFunctions() throws Exception {

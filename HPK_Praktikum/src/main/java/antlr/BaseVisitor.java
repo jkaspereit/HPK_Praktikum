@@ -2,6 +2,11 @@ package antlr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -22,6 +27,7 @@ import antlr.LibExprParser.ParensContext;
 import antlr.LibExprParser.PowContext;
 import antlr.LibExprParser.PrintExprContext;
 import antlr.LibExprParser.ProgContext;
+import antlr.LibExprParser.StatContext;
 import application.WRBScript;
 import util.WRBFunction;
 
@@ -57,7 +63,42 @@ public class BaseVisitor extends LibExprBaseVisitor<Double> {
 			// remove ';'
 			ctx.removeLastChild(); // END_EXPR
 		}
-		return super.visitProg(ctx);
+		return multithreading(ctx);
+	}
+
+	/**
+	 * Multithreading: every single stat will be visit in a new thread.
+	 * 
+	 * @param ctx ParseTree.stat
+	 * @return value of the last stat.printexpr
+	 */
+	private Double multithreading(ProgContext ctx) {
+		double value = 0.0; // dummy value
+		ExecutorService threadPool = Executors.newCachedThreadPool(); 
+		// start a new thread for every stat
+		for (StatContext stat: ctx.stat()) {
+			// thread run implementation
+			Callable<Double> statThread = new Callable<Double>() {
+
+				@Override
+				public Double call() throws Exception {
+					return visit(stat);
+				}
+			};
+			// future is waiting for needed results
+			Future<Double> result = threadPool.submit(statThread);
+			try {
+				value = result.get();
+			} catch (InterruptedException e) {
+				// Deadlock interrupted
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// solo reason for an execution bug is an illegal argument!
+				throw new IllegalArgumentException(e);
+			}
+
+		}
+		return value;
 	}
 
 	/**

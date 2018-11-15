@@ -41,12 +41,6 @@ public class WRBScriptTest extends AbstractScriptTest{
         script.getVariable(key);
     }
 
-    @Test
-    public void testSignedSecondArg() throws Exception {
-        String task = "2 + -6";
-        assertEquals(-4.0, script.parse(task), eps);
-    }
-
 
     @Test
     public final void testLongAdd() throws Exception {
