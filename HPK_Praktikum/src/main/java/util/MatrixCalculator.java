@@ -1,6 +1,14 @@
 package util;
 
-public class MatrixService {
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import antlr.LibExprParser.StatContext;
+
+public class MatrixCalculator {
 
 	public double[][] mathSeriell(double[][] matrixEins, double[][] matrixZwei) {
 		
@@ -24,14 +32,6 @@ public class MatrixService {
 		
 		return result;
 	}
-
-	private double mult(double[] row, double[] column) {
-		double result = 0; 
-		for (int i = 0; i < row.length; i++) {
-			result += row[i] * column[i];
-		}
-		return result;
-	}
 	
 	public void printMatrix (double[][] matrix) {
 		for (int j = 0; j < matrix.length; j++) {
@@ -40,6 +40,14 @@ public class MatrixService {
 			}
 			System.out.println("|");
 		}
+	}
+	
+	protected double mult(double[] row, double[] column) {
+		double result = 0; 
+		for (int i = 0; i < row.length; i++) {
+			result += row[i] * column[i];
+		}
+		return result;
 	}
 	
 }

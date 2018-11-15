@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import util.Matrix;
-import util.MatrixService;
+import util.MatrixCalculator;
 
 public class MatrixTest {
 
