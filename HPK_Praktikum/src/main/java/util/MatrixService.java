@@ -17,19 +17,29 @@ public class MatrixService {
 		// multiplication 
 		for (int j = 0; j < result.length; j++) {
 			for (int i = 0; i < result[j].length; i++) {
+				// ( m1 row j )  * ( m2 column i )
 				result[j][i] = mult(m1.row(j),m2.column(i));
 			}
 		}
 		
 		return result;
 	}
-	
+
 	private double mult(double[] row, double[] column) {
 		double result = 0; 
 		for (int i = 0; i < row.length; i++) {
 			result += row[i] * column[i];
 		}
 		return result;
+	}
+	
+	public void printMatrix (double[][] matrix) {
+		for (int j = 0; j < matrix.length; j++) {
+			for (int i = 0; i < matrix.length; i++) {
+				System.out.print("|" + matrix[j][i]);
+			}
+			System.out.println("|");
+		}
 	}
 	
 }

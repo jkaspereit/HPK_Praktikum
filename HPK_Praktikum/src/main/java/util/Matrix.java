@@ -20,18 +20,20 @@ public class Matrix {
 		return matrix[0].length;
 	}
 	
-	public double[] column(int column) {
-		return matrix[column];
+	public double[] row(int row) {
+		return matrix[row];
 	}
 	
-	public double[] row(int row) {
-		double[] result = new double[width()];
+	public double[] column(int column) {
+		double[] result = new double[height()];
 		for (int j = 0; j < matrix.length; j++) {
 			for (int i = 0; i < matrix[j].length; i++) {
-				result[j] = matrix[j][i];
+				if(i == column) {
+					result[j] = matrix[j][i];					
+				}
 			}
 		}
-		return result;
+		return  result;
 	}
 
 }
