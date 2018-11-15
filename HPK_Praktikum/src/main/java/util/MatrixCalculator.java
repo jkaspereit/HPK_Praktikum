@@ -10,17 +10,14 @@ import antlr.LibExprParser.StatContext;
 
 public class MatrixCalculator {
 
+	protected Matrix m1;
+	
+	protected Matrix m2;
+	
 	public double[][] mathSeriell(double[][] matrixEins, double[][] matrixZwei) {
 		
-		Matrix m1 = new Matrix(matrixEins); // init m1
-		Matrix m2 = new Matrix(matrixZwei); // init m2
-		
-		if(m1.width()!=m2.height()) { // check size 
-			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
-		}
-		
-		// init result matrix
-		double[][] result = new double[m1.height()][m2.width()]; 
+		// init math
+		double[][] result = initMath(matrixEins, matrixZwei);
 		
 		// multiplication 
 		for (int j = 0; j < result.length; j++) {
@@ -48,6 +45,22 @@ public class MatrixCalculator {
 			result += row[i] * column[i];
 		}
 		return result;
+	}
+	
+	protected double[][] initMath(double[][] matrixEins, double[][] matrixZwei){
+		if(matrixEins == null || matrixZwei == null) {
+			throw new IllegalArgumentException("Null is not valid argument!");
+		}
+		
+		m1 = new Matrix(matrixEins); // init m1
+		m2 = new Matrix(matrixZwei); // init m2
+		
+		if(m1.width()!=m2.height()) { // check size 
+			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
+		}
+		
+		// init result matrix
+		return new double[m1.height()][m2.width()]; 
 	}
 	
 }

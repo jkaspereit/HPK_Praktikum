@@ -6,24 +6,43 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.ibm.icu.util.InitialTimeZoneRule;
+
 public class MultithreadingMatrixCalculator extends MatrixCalculator {
 	
 	public double[][] mathParallel(double[][] matrixEins, double[][] matrixZwei) {
+		// init math
+		double[][] result = initMath(matrixEins, matrixZwei); 
 		
-		Matrix m1 = new Matrix(matrixEins); // init m1
-		Matrix m2 = new Matrix(matrixZwei); // init m2
+		// Init threadPool
+		ExecutorService threadPool = Executors.newCachedThreadPool(); 
 		
-		if(m1.width()!=m2.height()) { // check size 
-			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
+		for(int j = 0; j < result.length;j++) {
+			final int column = j;
+			Callable<Void> statThread = new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					for (int i = 0; i < result[column].length; i++) {
+						result[column][i] = mult(m1.row(column),m2.column(i));
+					}
+					return null;
+				}
+			};
+			
+			Future<Void> threadResult = threadPool.submit(statThread);
 		}
 		
-		// init result matrix
-		double[][] result = new double[m1.height()][m2.width()]; 
+		return result;
+	}
+	
+	public double[][] mathDivideConquer(double[][] matrixEins, double[][] matrixZwei) {	
+		// init math
+		double[][] result = initMath(matrixEins, matrixZwei);
 		
 		return multithreadingIndizeMultiplication(result, m1, m2);
 	}
 	
-	public double[][] multithreadingIndizeMultiplication(double[][] result, Matrix m1, Matrix m2){
+	private double[][] multithreadingIndizeMultiplication(double[][] result, Matrix m1, Matrix m2){
 		// Init threadPool
 		ExecutorService threadPool = Executors.newCachedThreadPool(); 
 		// multiplication
