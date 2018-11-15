@@ -1,4 +1,4 @@
-package application;
+package util;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -15,32 +15,19 @@ import util.MatrixService;
 
 public class MatrixTest {
 
-	final double eps = 1.E-8;
-    MatrixService service;
-
-    @Before
-    public final void setUp() throws Exception {
-    	service = new MatrixService();
-        assertNotNull("no script implementation", service);
-    }
+	final double eps = 1.E-8; 
     
-    /**
-     * Get the actual implementation for the MatrixService.
-     * 
-     * @return service implementation
-     */
-    protected MatrixService getMatrixService() {
-        return new MatrixService();
-    }
-    
-    
-    @Test // TODO teste ob die row() methode funktioniert
+	/**
+	 * Method Test: Matrix.row(int row) 
+	 */
+    @Test 
     public final void testMatrixRow() {
     	double[][] init = {{4,2,1},{0,-2,4}};
+    	double[] row0 = {4,2,1};
+    	double[] row1 = {0,-2,4};
     	Matrix matrix = new Matrix(init);
-    	matrix.row(0); 
-    	matrix.row(1);
-    	throw new RuntimeException("todo");
+    	assertArrayEquals(row0, matrix.row(0), eps);
+    	assertArrayEquals(row1, matrix.row(1), eps);
     }
     
     /**
@@ -77,18 +64,6 @@ public class MatrixTest {
     	Matrix matrix = new Matrix(init);
     	assertEquals(4, matrix.width());
     }
-    
-    
-    @Test
-    public final void testLongAdd() throws Exception {
-        double[][] m1 = {{4,2,1},{0,-2,4}};
-        double[][] m2 = {{1,2,3},{0,4,6},{2,-1,8}};
-        double[][] result = {{6,15,32},{8,-12,20}};
-        service.printMatrix(service.mathSeriell(m1, m2));
-        assertEquals(result,service.mathSeriell(m1, m2));
         
-    }
-
-    
     
 }

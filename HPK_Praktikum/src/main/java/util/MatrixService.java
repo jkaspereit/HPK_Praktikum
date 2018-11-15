@@ -8,7 +8,7 @@ public class MatrixService {
 		Matrix m2 = new Matrix(matrixZwei); // init m2
 		
 		if(m1.width()!=m2.height()) { // check size 
-			throw new IllegalArgumentException("matrixsize doesnt match.");
+			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
 		}
 		
 		// init result matrix
