@@ -5,61 +5,52 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import antlr.BaseVisitor;
 import antlr.LibExprLexer;
 import antlr.LibExprParser;
 import error.IllegalArgumentExceptionListener;
-import error.ThrowErrorsStrategy;
 import util.Function;
 
-public class WRBScript implements Script{
+public class WRBScript implements Script {
 
 	HashMap<String, Function> memoryFunctions;
-	
+
 	HashMap<String, Double> memoryVariables;
-	
+
 	BaseVisitor visitor;
-	
-	boolean allowAutoCorrection;
-	
+
 	/**
 	 * Default - Constructor
 	 */
 	public WRBScript() {
 		memoryFunctions = new HashMap<>();
 		memoryVariables = new HashMap<>();
-		visitor = new BaseVisitor();
-		allowAutoCorrection = true;
-	}
-	
-	/**
-	 * WRBScript Constructor 
-	 * 
-	 * @param allowAutoCorrection Defines whether autoCorrection is allowed or not. 
-	 */
-	public WRBScript(boolean allowAutoCorrection) {
-		memoryFunctions = new HashMap<>();
-		memoryVariables = new HashMap<>();
-		visitor = new BaseVisitor();
-		this.allowAutoCorrection = allowAutoCorrection;
-	}
-	
-	@Override
-	public Double parse(String definition) {
-		ParseTree tree = setUp(definition);
-		visitor.visit(tree);
-		return visitor.getResult();
+		initMathFunctions();
+		visitor = new BaseVisitor(this);
 	}
 
 	@Override
+	public Double parse(String definition) {
+		if(definition.isEmpty()) {
+			throw new IllegalArgumentException("IllegalArgumentException: Empty input."); 
+		}
+		CharStream stream = CharStreams.fromString(definition);
+		return prog(stream);
+	}
+	
+	@Override
 	public double parse(InputStream defStream) throws IOException {
-		return parse(defStream.toString());
+		CharStream stream = CharStreams.fromStream(defStream);
+		return prog(stream);
+	}
+	
+	public Double visit(ParseTree tree) { 
+		return visitor.visit(tree);
 	}
 
 	@Override
@@ -80,8 +71,8 @@ public class WRBScript implements Script{
 	@Override
 	public Function getFunction(String name) {
 		Function returnValue = memoryFunctions.get(name);
-		if(returnValue == null) {
-			throw new IllegalArgumentException("Kein Eintrag für die Funktion: " + name +" gefunden.");
+		if (returnValue == null) {
+			throw new IllegalArgumentException("Kein Eintrag für die Funktion: " + name + " gefunden.");
 		}
 		return returnValue;
 	}
@@ -89,8 +80,8 @@ public class WRBScript implements Script{
 	@Override
 	public double getVariable(String name) {
 		Double returnValue = memoryVariables.get(name);
-		if(returnValue == null) {
-			throw new IllegalArgumentException("Kein Eintrag für die Variable: " + name +" gefunden.");
+		if (returnValue == null) {
+			throw new IllegalArgumentException("Kein Eintrag für die Variable: " + name + " gefunden.");
 		}
 		return returnValue;
 	}
@@ -100,51 +91,45 @@ public class WRBScript implements Script{
 		memoryVariables.put(name, value);
 	}
 	
-	/**
-	 * Creates the Parse-Tree for the given input. 
-	 * 
-	 * @param inputString input 
-	 * @return {@link ParseTree}
-	 */
-	private ParseTree setUp(String inputString) {
-    	LibExprLexer lexer = createLexer(inputString);
-    	LibExprParser parser = createParser(lexer);
-    	
-    	return parser.prog();
+	public HashMap<String, Double> getMemoryVariables() {
+		return memoryVariables;
 	}
 	
+	public void setMemoryVariables(HashMap<String, Double> memoryVariables) {
+		this.memoryVariables = memoryVariables;
+	}
+	
+	public HashMap<String, Function> getMemoryFunctions() {
+		return memoryFunctions;
+	}
+	
+	public void setMemoryFunctions(HashMap<String, Function> memoryFunctions) {
+		this.memoryFunctions = memoryFunctions;
+	}
+
 	/**
-	 * Creates a lexer for the given input. 
+	 * Creates the Parse-Tree for the given input.
+	 * 
+	 * @param inputString input
+	 * @return {@link ParseTree}
+	 */
+	private double prog(CharStream input) {
+		LibExprLexer lexer = createLexer(input);
+		LibExprParser parser = createParser(lexer);
+		ParseTree tree = parser.prog();
+		return visit(tree);
+	}
+
+	/**
+	 * Creates a lexer for the given input.
 	 * 
 	 * @param inputString input
 	 * @return {@link LibExprLexer}
 	 */
-	private LibExprLexer createLexer(String inputString) {
-    	ANTLRInputStream input = new ANTLRInputStream(inputString);
-    	LibExprLexer lexer;
-    	if(allowAutoCorrection) {
-    		lexer = new LibExprLexer(input);
-    	} else { // no auto correction allowed.
-    		// overwrite recover method from LibExpLexer
-        	class Lexer extends LibExprLexer{
-
-    			public Lexer(CharStream input) {
-    				super(input);
-    				// TODO Auto-generated constructor stub
-    			}
-    			
-    			@Override
-    			public void recover(LexerNoViableAltException e) {
-    				throw new IllegalArgumentException(e);
-    			}
-        		
-        	}
-        	// lexer without auto correction 
-        	lexer = new Lexer(input);
-    	}
-    	return lexer;
+	private LibExprLexer createLexer(CharStream input) {
+		return new LibExprLexer(input);
 	}
-	
+
 	/**
 	 * Creates a parser based on the given lexer.
 	 * 
@@ -152,14 +137,94 @@ public class WRBScript implements Script{
 	 * @return {@link LibExprParser}
 	 */
 	private LibExprParser createParser(LibExprLexer lexer) {
-    	CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
-    	LibExprParser parser = new LibExprParser(commonTokenStream);
-    	if(!allowAutoCorrection) { // auto correction not allowed
-        	parser.removeErrorListeners(); // remove default listeners 
-        	parser.addErrorListener(new IllegalArgumentExceptionListener()); // add listener for illegal arguments 
-        	parser.setErrorHandler(new ThrowErrorsStrategy()); // error handling 
-    	}
+		CommonTokenStream commonTokenStream = new CommonTokenStream(lexer);
+		LibExprParser parser = new LibExprParser(commonTokenStream);
+//		parser.removeErrorListeners();
+		parser.addErrorListener(new IllegalArgumentExceptionListener());
+//		parser.setErrorHandler(new ThrowErrorsStrategy());
 		return parser;
+	}
+
+	/**
+	 * Initializes mathematical standard functions
+	 */
+	private void initMathFunctions() {
+		// sin cos tan
+		Function sin = (args) -> Math.sin(args[0]); 
+		Function cos = (args) -> Math.cos(args[0]); 
+		Function tan = (args) -> Math.tan(args[0]); 
+		setFunction("sin", sin);
+		setFunction("cos", cos);
+		setFunction("tan", tan);
+		// asin acos atan
+		Function asin = (args) -> Math.asin(args[0]);
+		Function acos = (args) -> Math.acos(args[0]); 
+		Function atan = (args) -> Math.atan(args[0]); 
+		setFunction("asin", asin);
+		setFunction("acos", acos);
+		setFunction("atan", atan);
+		// sinh cosh tanh
+		Function sinh = (args) -> Math.sinh(args[0]);
+		Function cosh = (args) -> Math.cosh(args[0]);
+		Function tanh = (args) -> Math.tanh(args[0]); 
+		setFunction("sinh", sinh);
+		setFunction("cosh", cosh);
+		setFunction("tanh", tanh);
+		// abs exp pow sqrt
+		Function abs = (args) -> Math.abs(args[0]);
+		Function exp = (args) -> Math.exp(args[0]);
+		Function pow = (args) -> Math.pow(args[0], args[1]);
+		Function sqrt = (args) -> Math.sqrt(args[0]);
+		setFunction("abs", abs);
+		setFunction("exp", exp);
+		setFunction("pow", pow);
+		setFunction("sqrt", sqrt);
+		// logartihmus 
+		Function log2 = (args) -> Math.log(args[0])/Math.log(2);
+		Function log10 = (args) -> Math.log10(args[0]);
+		Function logE = (args) -> Math.log(args[0]);
+		setFunction("log2", log2);
+		setFunction("lb", log2); // alias
+		setFunction("ld", log2); // alias
+		setFunction("log10", log10);
+		setFunction("log", log10); // alias
+		setFunction("logE", logE);
+		setFunction("ln", logE);
+		// max min
+		Function max = (args) -> {
+			double result = args[0];
+			for(double arg: args) {
+				if (result < arg) {
+					result = arg;
+				}
+			}
+			return result;
+		};
+		Function min = (args) -> {
+			double result = args[0];
+			for(double arg: args) {
+				if (result > arg) {
+					result = arg;
+				}
+			}
+			return result;
+		};
+		setFunction("max", max);
+		setFunction("min", min);
+		
+	}
+	
+	
+	@Override
+	public Script concat(Script that) {
+		WRBScript concatScript = new WRBScript();
+		HashMap<String, Double> mv = (HashMap<String, Double>) getMemoryVariables().clone(); 
+		mv.putAll(((WRBScript) that).getMemoryVariables());
+		concatScript.setMemoryVariables(mv);
+		HashMap<String, Function> mf = (HashMap<String, Function>) getMemoryFunctions().clone();
+		mf.putAll(((WRBScript) that).getMemoryFunctions());
+		concatScript.setMemoryFunctions(mf);
+		return concatScript;
 	}
 
 }
