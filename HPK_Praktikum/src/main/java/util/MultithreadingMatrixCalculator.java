@@ -10,7 +10,16 @@ import com.ibm.icu.util.InitialTimeZoneRule;
 
 public class MultithreadingMatrixCalculator extends MatrixCalculator {
 	
-	public double[][] mathParallel(double[][] matrixEins, double[][] matrixZwei) {
+	/**
+	 * Parallel calculation of a matrix product. 
+	 * 
+	 * @param matrixEins
+	 * @param matrixZwei
+	 * @return result 
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public double[][] mathParallel(double[][] matrixEins, double[][] matrixZwei) throws InterruptedException, ExecutionException {
 		// init math
 		double[][] result = initMath(matrixEins, matrixZwei); 
 		
@@ -19,20 +28,30 @@ public class MultithreadingMatrixCalculator extends MatrixCalculator {
 		
 		for(int j = 0; j < result.length;j++) {
 			final int column = j;
-			Callable<Void> statThread = new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					for (int i = 0; i < result[column].length; i++) {
-						result[column][i] = mult(m1.row(column),m2.column(i));
-					}
-					return null;
-				}
-			};
-			
-			Future<Void> threadResult = threadPool.submit(statThread);
+			Callable<double[]> startThread = createCallableMathParallel(result[column], column);
+			Future<double[]> threadResult = threadPool.submit(startThread);
+			result[column] = threadResult.get();
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * createsCallable 
+	 * @param row
+	 * @param column
+	 * @return
+	 */
+	private Callable<double[]> createCallableMathParallel(double[] row, int column){
+		return new Callable<double[]>() {
+			@Override
+			public double[] call() throws Exception {
+				for (int i = 0; i < row.length; i++) {
+					row[i] = mult(m1.row(column),m2.column(i));
+				}
+				return row;
+			}
+		};
 	}
 	
 	public double[][] mathDivideConquer(double[][] matrixEins, double[][] matrixZwei) {	

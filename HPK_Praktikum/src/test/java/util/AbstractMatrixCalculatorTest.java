@@ -4,6 +4,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.concurrent.ExecutionException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +20,7 @@ public abstract class AbstractMatrixCalculatorTest {
         assertNotNull("no script implementation", matrixCalculator);
     }
     
-    protected abstract double[][] calculate(double[][] m1, double[][] m2);     	
+    protected abstract double[][] calculate(double[][] m1, double[][] m2) throws InterruptedException, ExecutionException;     	
     
     /**
      * Get the actual implementation for the MatrixService.
@@ -104,6 +106,6 @@ public abstract class AbstractMatrixCalculatorTest {
 			}
 		}		
 	}
-
-
+	
+	
 }
