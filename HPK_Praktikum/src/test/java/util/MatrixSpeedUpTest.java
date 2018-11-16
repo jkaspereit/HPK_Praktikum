@@ -9,9 +9,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import calculator.ParallelMatrixCalculator;
+
 public class MatrixSpeedUpTest {
 
-	MultithreadingMatrixCalculator calculator;
+	ParallelMatrixCalculator calculator;
 	
 	double[][] matrixA;
 	double[][] matrixB;
@@ -24,7 +26,7 @@ public class MatrixSpeedUpTest {
 	
 	@Before
 	public void setUp() {
-		calculator = new MultithreadingMatrixCalculator();
+		calculator = new ParallelMatrixCalculator();
 	}
 	
 	@Test
@@ -49,6 +51,7 @@ public class MatrixSpeedUpTest {
 	 * @throws InterruptedException 
 	 */
 	private void doSpeedTest(int dim, int repetition, MATH_FLAG parallelFlag) throws InterruptedException, ExecutionException{
+		//TODO EINMAL LÄUFT MATH() SERIELL ZU VIEL!!!
 		long timeSeriell = runSingleSpeedTest(dim, repetition, MATH_FLAG.SERIELL);
 		long timeParallel = runSingleSpeedTest(dim, repetition, parallelFlag);
 		System.out.println(repetition +"\t\t|" +  dim +"\t\t| " + timeSeriell + "\t\t|" + timeParallel +"\t\t|" + ((double) timeSeriell/timeParallel));
@@ -90,11 +93,11 @@ public class MatrixSpeedUpTest {
 	private double[][] calculate(MATH_FLAG flag) throws InterruptedException, ExecutionException {
 		switch (flag) {
 		case SERIELL:
-			return calculator.mathSeriell(matrixA, matrixB);
+			return calculator.math(matrixA, matrixB);
 		case PARALLEL:
-			return calculator.mathParallel(matrixA, matrixB);
+			return calculator.math(matrixA, matrixB);
 		case DIVIDE_CONQUERE:
-			return calculator.mathDivideConquer(matrixA, matrixB);
+			return calculator.math(matrixA, matrixB);
 		default:
 			return null;
 		}
@@ -105,11 +108,13 @@ public class MatrixSpeedUpTest {
 	 * 
 	 * @param size Defines MatrixA (size-1)x(size), MatrixB (n)x(n+1).
 	 * @return double[][] expectedValue of the Matrix calculation.
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
-	private double[][] initrun(int size) {
+	private double[][] initrun(int size) throws InterruptedException, ExecutionException {
 		matrixA = createRndMatrix(size-1, size);
 		matrixB = createRndMatrix(size, size+1);	
-		return calculator.mathSeriell(matrixA, matrixB);
+		return calculator.math(matrixA, matrixB);
 	}
 
 	/**

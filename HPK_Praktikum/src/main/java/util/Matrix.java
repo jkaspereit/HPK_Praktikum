@@ -65,5 +65,17 @@ public class Matrix {
 		}
 		return  result;
 	}
+	
+	/**
+	 * prints the matrix.
+	 */
+	public void printMatrix () {
+		for (int j = 0; j < matrix.length; j++) {
+			for (int i = 0; i < matrix.length; i++) {
+				System.out.print("|" + matrix[j][i]);
+			}
+			System.out.println("|");
+		}
+	}
 
 }

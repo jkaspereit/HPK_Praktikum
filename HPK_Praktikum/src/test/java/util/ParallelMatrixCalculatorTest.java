@@ -12,12 +12,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MultithreadingMatrixCalculatorTest extends AbstractMatrixCalculatorTest{
+import calculator.AbstractMatrixCalculator;
+import calculator.ParallelMatrixCalculator;
 
-	
+public class ParallelMatrixCalculatorTest extends AbstractMatrixCalculatorTest{
+
 	@Override
-	protected double[][] calculate(double[][] m1, double[][] m2) throws InterruptedException, ExecutionException {
-		return matrixCalculator.mathParallel(m1, m2);
+	protected AbstractMatrixCalculator getCalculator() {
+		return new ParallelMatrixCalculator();
 	}
 
 }

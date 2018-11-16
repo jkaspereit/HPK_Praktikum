@@ -10,8 +10,8 @@ import javax.management.RuntimeErrorException;
 import org.junit.Before;
 import org.junit.Test;
 
+import calculator.SeriellMatrixCalculator;
 import util.Matrix;
-import util.MatrixCalculator;
 
 public class MatrixTest {
 

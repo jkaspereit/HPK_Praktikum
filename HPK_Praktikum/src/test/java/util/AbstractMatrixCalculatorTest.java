@@ -1,6 +1,5 @@
 package util;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -9,26 +8,34 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 
+import calculator.AbstractMatrixCalculator;
+import calculator.ParallelMatrixCalculator;
+import calculator.SeriellMatrixCalculator;
+
 public abstract class AbstractMatrixCalculatorTest {
 	
 	final double eps = 1.E-8;
-    protected MultithreadingMatrixCalculator matrixCalculator;
+    protected AbstractMatrixCalculator matrixCalculator;
 
     @Before
     public void setUp() throws Exception {
-    	matrixCalculator = new MultithreadingMatrixCalculator();
+    	matrixCalculator = getCalculator();
         assertNotNull("no script implementation", matrixCalculator);
     }
     
-    protected abstract double[][] calculate(double[][] m1, double[][] m2) throws InterruptedException, ExecutionException;     	
+    protected abstract AbstractMatrixCalculator getCalculator();
+
+	protected double[][] calculate(double[][] m1, double[][] m2) throws InterruptedException, ExecutionException{
+    	return matrixCalculator.math(m1, m2);
+    }
     
     /**
      * Get the actual implementation for the MatrixService.
      * 
      * @return service implementation
      */
-    protected MatrixCalculator getMatrixService() {
-        return new MatrixCalculator();
+    protected SeriellMatrixCalculator getMatrixService() {
+        return new SeriellMatrixCalculator();
     }
     
     @Test

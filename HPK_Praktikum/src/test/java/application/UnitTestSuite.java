@@ -4,13 +4,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import util.MatrixCalculatorTest;
+import util.SeriellMatrixCalculatorTest;
 import util.MatrixTest;
-import util.MultithreadingMatrixCalculatorTest;
+import util.ParallelMatrixCalculatorTest;
 
 @RunWith(Suite.class)
 //@SuiteClasses( {MatrixTest.class, MatrixServiceTest.class, WRBScriptTest.class })
-@SuiteClasses( {MatrixTest.class, MatrixCalculatorTest.class, MultithreadingMatrixCalculatorTest.class} )
+@SuiteClasses( {MatrixTest.class, SeriellMatrixCalculatorTest.class, ParallelMatrixCalculatorTest.class} )
 public class UnitTestSuite {
 	
 }
