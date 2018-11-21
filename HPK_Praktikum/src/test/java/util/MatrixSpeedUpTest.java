@@ -16,9 +16,7 @@ import calculator.SeriellMatrixCalculator;
 public class MatrixSpeedUpTest {
 
 	ParallelMatrixCalculator parallelCalculator;
-	
 	SeriellMatrixCalculator seriellCalculator;
-	
 	DivideAndConquerMatrixCalculator divideAndConquereCalculator;
 	
 	double[][] matrixA;
@@ -36,20 +34,33 @@ public class MatrixSpeedUpTest {
 		seriellCalculator = new SeriellMatrixCalculator();
 		parallelCalculator = new ParallelMatrixCalculator();
 		divideAndConquereCalculator = new DivideAndConquerMatrixCalculator();
+		parallelCalculator.init();
 	}
-	
+
 	@Test
-	public final void speedUpTest() throws InterruptedException, ExecutionException {
-		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
+	public final void speedUpTestCAC() throws InterruptedException, ExecutionException {
+		System.out.println("repetitions\t\t| dimension\t\t| seriell\t\t| parallel\t\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
-		
+
 		runSingleSpeedTest(64, 100, MATH_FLAG.DIVIDE_CONQUERE);
 		runSingleSpeedTest(128, 50, MATH_FLAG.DIVIDE_CONQUERE);
 		runSingleSpeedTest(256, 25, MATH_FLAG.DIVIDE_CONQUERE);
 		runSingleSpeedTest(256, 12, MATH_FLAG.DIVIDE_CONQUERE);
-		
+
 	}
-	
+
+	@Test
+	public final void speedUpTestP() throws InterruptedException, ExecutionException {
+		System.out.println("repetitions\t\t| dimension\t\t| seriell\t\t| parallel\t\t| speedup");
+		System.out.println("----------------+---------------+---------------+---------------+---------------");
+
+		runSingleSpeedTest(64, 100, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(128, 10, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(256, 10, MATH_FLAG.PARALLEL);
+
+	}
+
+
 	/**
 	 * Runs a Speed Test and prints the result. 
 	 * 
@@ -67,19 +78,22 @@ public class MatrixSpeedUpTest {
 		
 		for (int i = 0; i < repetitions; i++) {
 			initrun(dim);
+
 			// Seriell
 			long launchRunTime = System.currentTimeMillis();
 			double[][] expected = calculate(MATH_FLAG.SERIELL);
 			finalTimeSeriell += System.currentTimeMillis() - launchRunTime;
+
 			// Parallel
 			launchRunTime = System.currentTimeMillis();
 			double[][] value = calculate(flag);
 			finalTimeParallel += System.currentTimeMillis() - launchRunTime;
+
 			// Check
 			assertArrayEquals(expected, value, eps);
 		}
 		
-		System.out.println(repetitions +"\t\t|" +  dim +"\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));
+		System.out.println(repetitions +"\t\t\t\t|" +  dim + "\t\t\t\t| " + finalTimeSeriell+ "\t\t\t|" + finalTimeParallel +"\t\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));
 	}
 	
 	/**

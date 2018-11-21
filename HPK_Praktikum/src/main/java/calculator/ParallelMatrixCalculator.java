@@ -1,5 +1,7 @@
 package calculator;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -11,53 +13,68 @@ import com.ibm.icu.util.InitialTimeZoneRule;
 import util.Matrix;
 
 public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
-	
-	/**
-	 * Parallel calculation of a matrix product. 
-	 * 
-	 * @param matrixA
-	 * @param matrixB
-	 * @return result 
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 */
-	public double[][] math(double[][] matrixA, double[][] matrixB) throws InterruptedException, ExecutionException {
-		
-		if(matrixA[0].length != matrixB.length) { // check size 
-			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
-		}
-		
-		// init math
-		double[][] result = initMath(matrixA, matrixB); 
-		
-		// Init threadPool
-		ExecutorService threadPool = Executors.newCachedThreadPool(); 
-		
-		for(int j = 0; j < result.length;j++) {
-			final int column = j;
-			final double[] row = result[column].clone();
-			final double[][] m1 = matrixA.clone();
-			final double[][] m2 = matrixB.clone();
-			if (m1==matrixA) {
-				System.out.println("alhajshdfhasljdhflkhk");
-			}
-			Callable<double[]> startThread = new Callable<double[]>() {
-				@Override
-				public double[] call() throws Exception {
-					for (int i = 0; i < row.length; i++) {
-						row[i] = mult(m1[column],column(m2, i));
-					}
-					return row;
-				}
-			};
-			Future<double[]> threadResult = threadPool.submit(startThread);
-			result[column] = threadResult.get();
-		}
-		
-		return result;
-	}
-	
-	
+
+    ExecutorService threadPool = null;
+//	final double[][] m1 = null;
+//	final double[][] m2 = null;
+
+
+    public void init() {
+        if (threadPool == null) {
+            threadPool = Executors.newCachedThreadPool();
+        }
+    }
+
+    /**
+     * Parallel calculation of a matrix product.
+     *
+     * @param matrixA
+     * @param matrixB
+     * @return result
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
+    public double[][] math(double[][] matrixA, double[][] matrixB) throws InterruptedException, ExecutionException {
+
+        if (matrixA[0].length != matrixB.length) { // check size
+            throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
+        }
+
+        // init math
+        double[][] result = initMath(matrixA, matrixB);
+
+        ArrayList<Future<double[]>> data = new ArrayList<>();
+
+        //more threads != better speedup, set max?
+        threadPool = Executors.newFixedThreadPool(result.length);
+
+        for (int j = 0; j < result.length; j++) {
+            final int column = j;
+            final double[] row = result[column].clone();
+
+            Callable<double[]> startThread = () -> {
+
+                for (int i = 0; i < row.length; i++) {
+                    row[i] = mult(matrixA[column], column(matrixB, i));
+                }
+                return row;
+
+            };
+
+            //run this thread and go on...
+			data.add(threadPool.submit(startThread));
+        }
+
+        // ...until you get the values
+        for (int i = 0; i < data.size(); i++) {
+            result[i] = data.get(i).get();
+        }
+
+
+        return result;
+    }
+
+
 //	/**
 //	 * Creates Callable<double[]> for math() 
 //	 * 
@@ -76,6 +93,6 @@ public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
 //			}
 //		};
 //	}
-	
+
 
 }

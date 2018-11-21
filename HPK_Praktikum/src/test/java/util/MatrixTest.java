@@ -2,16 +2,8 @@ package util;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import javax.management.RuntimeErrorException;
-
-import org.junit.Before;
 import org.junit.Test;
 
-import calculator.SeriellMatrixCalculator;
-import util.Matrix;
 
 public class MatrixTest {
 
@@ -39,7 +31,9 @@ public class MatrixTest {
     	double[] col0 = {4,0};
     	double[] col1 = {2,-2};
     	double[] col2 = {1,4};
+
     	Matrix matrix = new Matrix(init);
+
     	assertArrayEquals(col0, matrix.column(0), eps);
     	assertArrayEquals(col1, matrix.column(1), eps);
     	assertArrayEquals(col2, matrix.column(2), eps);
