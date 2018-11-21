@@ -34,27 +34,17 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 
-		System.out.println("Start 1");
 		double[][] c11 = startThreadMult(splitA.get(0), splitB.get(0), threadPool,1);
-		System.out.println("Start 2");
 		double[][] c12 = startThreadMult(splitA.get(1), splitB.get(2), threadPool,2);
-		System.out.println("Start 3");
 		double[][] c21 = startThreadMult(splitA.get(0), splitB.get(1), threadPool,3);
-		System.out.println("Start 4");
 		double[][] c22 = startThreadMult(splitA.get(1), splitB.get(3), threadPool,4);
-		System.out.println("Start 5");
 		double[][] c31 = startThreadMult(splitA.get(2), splitB.get(0), threadPool,5);
-		System.out.println("Start 6");
 		double[][] c32 = startThreadMult(splitA.get(3), splitB.get(2), threadPool,6);
-		System.out.println("Start 7");
 		double[][] c41 = startThreadMult(splitA.get(2), splitB.get(1), threadPool,7);
-		System.out.println("Start 8");
 		double[][] c42 = startThreadMult(splitA.get(3), splitB.get(3), threadPool,8);
 
 		splitC.add(startThreadAddition(c11, c12, threadPool).get());
-		System.out.println("Startet ADD 1");
 		splitC.add(startThreadAddition(c21, c22, threadPool).get());
-		System.out.println("Startet ADD 2");
 		splitC.add(startThreadAddition(c31, c32, threadPool).get());
 		splitC.add(startThreadAddition(c41, c42, threadPool).get());
 
@@ -132,8 +122,6 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 		Future<double[][]> submit = threadPool.submit(statThread);
 		
 		double[][] result = submit.get();
-		
-		System.out.println("Hat Ergebnis:" + c);
 		
 		return result;
 	}

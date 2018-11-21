@@ -9,16 +9,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import calculator.DivideAndConquerMatrixCalculator;
 import calculator.ParallelMatrixCalculator;
+import calculator.SeriellMatrixCalculator;
 
 public class MatrixSpeedUpTest {
 
-	ParallelMatrixCalculator calculator;
+	ParallelMatrixCalculator parallelCalculator;
+	
+	SeriellMatrixCalculator seriellCalculator;
+	
+	DivideAndConquerMatrixCalculator divideAndConquereCalculator;
 	
 	double[][] matrixA;
 	double[][] matrixB;
 	
 	final double eps = 1.E-8;
+
 	
     public static enum MATH_FLAG {
         SERIELL, PARALLEL, DIVIDE_CONQUERE;
@@ -26,7 +33,9 @@ public class MatrixSpeedUpTest {
 	
 	@Before
 	public void setUp() {
-		calculator = new ParallelMatrixCalculator();
+		seriellCalculator = new SeriellMatrixCalculator();
+		parallelCalculator = new ParallelMatrixCalculator();
+		divideAndConquereCalculator = new DivideAndConquerMatrixCalculator();
 	}
 	
 	@Test
@@ -34,10 +43,10 @@ public class MatrixSpeedUpTest {
 		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
 		
-		runSingleSpeedTest(64, 100, MATH_FLAG.PARALLEL);
-		runSingleSpeedTest(128, 50, MATH_FLAG.PARALLEL);
-		runSingleSpeedTest(256, 25, MATH_FLAG.PARALLEL);
-		runSingleSpeedTest(256, 12, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(64, 100, MATH_FLAG.DIVIDE_CONQUERE);
+		runSingleSpeedTest(128, 50, MATH_FLAG.DIVIDE_CONQUERE);
+		runSingleSpeedTest(256, 25, MATH_FLAG.DIVIDE_CONQUERE);
+		runSingleSpeedTest(256, 12, MATH_FLAG.DIVIDE_CONQUERE);
 		
 	}
 	
@@ -84,11 +93,11 @@ public class MatrixSpeedUpTest {
 	private double[][] calculate(MATH_FLAG flag) throws InterruptedException, ExecutionException {
 		switch (flag) {
 		case SERIELL:
-			return calculator.math(matrixA, matrixB);
+			return seriellCalculator.math(matrixA, matrixB);
 		case PARALLEL:
-			return calculator.math(matrixA, matrixB);
+			return parallelCalculator.math(matrixA, matrixB);
 		case DIVIDE_CONQUERE:
-			return calculator.math(matrixA, matrixB);
+			return divideAndConquereCalculator.math(matrixA, matrixB);
 		default:
 			return null;
 		}
