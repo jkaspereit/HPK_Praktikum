@@ -114,7 +114,7 @@ public abstract class AbstractMatrixCalculatorTest {
      * @param mathSeriell input double[][]
      * @param eps the maximum delta between expected and input
      */
-	protected void assertArrayEquals(double[][] result, double[][] mathSeriell, double eps) {
+	protected void assertArrayEquals(double[][] result, double[][] mathSeriell, double eps) {		
 		for (int j = 0; j < mathSeriell.length; j++) {
 			for (int i = 0; i < mathSeriell.length; i++) {
 				assertEquals(result[j][i], mathSeriell[j][i], eps);

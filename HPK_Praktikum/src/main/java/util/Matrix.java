@@ -11,6 +11,10 @@ import java.util.List;
  */
 public class Matrix {
 	
+    public static enum MATRIX {
+        A,B,C,D;
+    } 
+	
 	double[][] matrix;
 	
 	/**
@@ -25,19 +29,38 @@ public class Matrix {
 	/**
 	 * height of the matrix
 	 * 
-	 * @return int height
+	 * @return height
 	 */
 	public int height() {
 		return matrix.length;
 	}
 	
 	/**
+	 * half height
+	 * @return height/2
+	 */
+	public int halfHeight() {
+		if (height()%2==1) return (height()+1)/2;
+		return height()/2;
+	}
+	
+	/**
 	 * height of the width
 	 * 
-	 * @return int width
+	 * @return width
 	 */
 	public int width(){
+		if(height()==0) return 0;
 		return matrix[0].length;
+	}
+	
+	/**
+	 * half width
+	 * @return width/2
+	 */
+	public int halfWidth() {
+		if (width()%2==1) return (width()+1)/2;
+		return width()/2;
 	}
 	
 	/**
@@ -47,6 +70,14 @@ public class Matrix {
 	 */
 	public double[] row(int index) {
 		return matrix[index];
+	}
+	
+	/**
+	 * Matrix as 2-dim double array.
+	 * @return double[][] matrix
+	 */
+	public double[][] toArray(){
+		return matrix;
 	}
 	
 	/**
@@ -77,5 +108,97 @@ public class Matrix {
 			System.out.println("|");
 		}
 	}
+	
+	/**
+	 * Splits a matrix into 4 parts.
+	 * @param part MATRIX A / B / C / D
+	 * @return Matrix 
+	 */
+	public Matrix split(MATRIX part){
+		return splitHeight(part).splitWidth(part);
+	}
+	
+	/**
+	 * Splits a matrix by width
+	 * @param part MATRIX A/C or B/D
+	 * @return new Matrix
+	 */
+	private Matrix splitWidth(MATRIX part) {
+		
+		double[][] result = new double[height()][width()/2];
+		
+		for (int column = 0; column < height(); column++) {
+			switch (part) {
+			case A:
+			case C:
+				result[column] = Arrays.copyOfRange(matrix[column], 0, halfWidth());
+				break;
+			case B:
+			case D:
+				result[column] = Arrays.copyOfRange(matrix[column], halfWidth(), width());
+				break;
+			default:
+				return null;
+			}
+		}
+		
+		return new Matrix(result);
+		
+	}
+	
+	/**
+	 * Splits a matrix by height.
+	 * @param part MATRIX A/B or C/D
+	 * @return new Matrix
+	 */
+	private Matrix splitHeight(MATRIX part) {
+		switch (part) {
+		case A:
+		case B:
+			return new Matrix( Arrays.copyOfRange(matrix, 0, halfHeight()));
+		case C:
+		case D:
+			return new Matrix( Arrays.copyOfRange(matrix, halfHeight(), height()) );
+		default:
+			return null;
+		}
+	}
+
+	/**
+	 * Concatenate with matrix2
+	 * @param matrix2
+	 * @return Matrix
+	 */
+	public Matrix concate(Matrix matrix2) {
+		double[][] result = new double[height()+matrix2.height()][width()];
+		int resultRowIndex = 0;
+		for (int rowIndex = 0; rowIndex < height(); resultRowIndex++,rowIndex++) {
+			result[resultRowIndex] = row(rowIndex);
+		}
+		for (int rowIndex = 0; rowIndex < matrix2.height();resultRowIndex++, rowIndex++) {
+			result[resultRowIndex] = matrix2.row(rowIndex);
+		}
+		return new Matrix(result);
+	}
+	
+	/**
+	 * Concatenate rows with matrix2.
+	 * @param matrix2
+	 * @return Matrix
+	 */
+	public Matrix concateRows(Matrix matrix2) {
+		double[][] result = new double[height()][width()+matrix2.width()];
+		for (int rowIndex = 0; rowIndex < height(); rowIndex++) {
+			int resultIndex = 0;
+			for (int index = 0; index < width();resultIndex++, index++) {
+				result[rowIndex][resultIndex] = matrix[rowIndex][index];
+			}
+			for (int index = 0; index < matrix2.width();resultIndex++, index++) {
+				result[rowIndex][resultIndex] = matrix2.toArray()[rowIndex][index];
+			}
+		}
+		return new Matrix(result);
+	}
+	
 
 }
