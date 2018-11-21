@@ -6,7 +6,7 @@ import util.Matrix;
 
 public abstract class AbstractMatrixCalculator {
 	
-	public abstract double[][] math(double[][] matrixA, double[][] matrixB) throws InterruptedException, ExecutionException ;
+	public abstract double[][] math(double[][] matrixA, double[][] matrixB) throws InterruptedException, ExecutionException;
 	
 
 	/**

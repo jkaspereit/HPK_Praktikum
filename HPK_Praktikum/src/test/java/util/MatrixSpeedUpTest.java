@@ -16,9 +16,7 @@ import calculator.SeriellMatrixCalculator;
 public class MatrixSpeedUpTest {
 
 	ParallelMatrixCalculator parallelCalculator;
-	
 	SeriellMatrixCalculator seriellCalculator;
-	
 	DivideAndConquerMatrixCalculator divideAndConquereCalculator;
 	
 	double[][] matrixA;
