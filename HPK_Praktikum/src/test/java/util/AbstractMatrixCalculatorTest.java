@@ -38,6 +38,14 @@ public abstract class AbstractMatrixCalculatorTest {
         return new SeriellMatrixCalculator();
     }
     
+    @Test 
+    public final void testMathDim0() throws Exception{
+        double[][] m1 = {{5}};
+        double[][] m2 = {{5}};
+        double[][] result = {{25}};
+        assertArrayEquals(result, calculate(m1, m2),eps);
+    }
+    
     @Test
     public final void testMathSeriellDim1() throws Exception {
         double[][] m1 = {{-14,7,-2}};
@@ -106,7 +114,7 @@ public abstract class AbstractMatrixCalculatorTest {
      * @param mathSeriell input double[][]
      * @param eps the maximum delta between expected and input
      */
-	private void assertArrayEquals(double[][] result, double[][] mathSeriell, double eps) {
+	protected void assertArrayEquals(double[][] result, double[][] mathSeriell, double eps) {
 		for (int j = 0; j < mathSeriell.length; j++) {
 			for (int i = 0; i < mathSeriell.length; i++) {
 				assertEquals(result[j][i], mathSeriell[j][i], eps);

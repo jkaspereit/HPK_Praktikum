@@ -34,52 +34,43 @@ public class MatrixSpeedUpTest {
 		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
 		
-		doSpeedTest(64, 100, MATH_FLAG.PARALLEL);
-		doSpeedTest(128, 50, MATH_FLAG.PARALLEL);
-		doSpeedTest(256, 25, MATH_FLAG.PARALLEL);
-		doSpeedTest(256, 12, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(64, 100, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(128, 50, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(256, 25, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(256, 12, MATH_FLAG.PARALLEL);
 		
 	}
 	
 	/**
 	 * Runs a Speed Test and prints the result. 
 	 * 
-	 * @param dim matrix dimension
-	 * @param repetition number of calculations
-	 * @param parallelFlag Defines the parallel calculation model.
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
-	 */
-	private void doSpeedTest(int dim, int repetition, MATH_FLAG parallelFlag) throws InterruptedException, ExecutionException{
-		//TODO EINMAL LÄUFT MATH() SERIELL ZU VIEL!!!
-		long timeSeriell = runSingleSpeedTest(dim, repetition, MATH_FLAG.SERIELL);
-		long timeParallel = runSingleSpeedTest(dim, repetition, parallelFlag);
-		System.out.println(repetition +"\t\t|" +  dim +"\t\t| " + timeSeriell + "\t\t|" + timeParallel +"\t\t|" + ((double) timeSeriell/timeParallel));
-	}
-	
-	/**
-	 * Runs repetitions times a near (size)x(size) matrices specified calculation.
-	 * 
-	 * @param size Defines the sizes of the matrices to calculate. 
-	 * @param repetitions Defines the number of repetition. 
+	 * @param dim Defines the dimension of the matrix
+	 * @param repetitions Defines the number of calculations. 
 	 * @param flag Defines the calculation model. 
 	 * 
-	 * @return run-time (speed)
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	private long runSingleSpeedTest(int size, int repetitions, MATH_FLAG flag) throws InterruptedException, ExecutionException{
+	private void runSingleSpeedTest(int dim, int repetitions, MATH_FLAG flag) throws InterruptedException, ExecutionException{
 		
-		long finalTime = 0; 
+		long finalTimeSeriell = 0;
+		long finalTimeParallel = 0;
 		
 		for (int i = 0; i < repetitions; i++) {
-			double[][] expected = initrun(size);
+			initrun(dim);
+			// Seriell
 			long launchRunTime = System.currentTimeMillis();
-			assertArrayEquals(expected, calculate(flag), eps);
-			finalTime += System.currentTimeMillis() - launchRunTime;
+			double[][] expected = calculate(MATH_FLAG.SERIELL);
+			finalTimeSeriell += System.currentTimeMillis() - launchRunTime;
+			// Parallel
+			launchRunTime = System.currentTimeMillis();
+			double[][] value = calculate(flag);
+			finalTimeParallel += System.currentTimeMillis() - launchRunTime;
+			// Check
+			assertArrayEquals(expected, value, eps);
 		}
 		
-		return finalTime;
+		System.out.println(repetitions +"\t\t|" +  dim +"\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));
 	}
 	
 	/**
@@ -111,10 +102,9 @@ public class MatrixSpeedUpTest {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	private double[][] initrun(int size) throws InterruptedException, ExecutionException {
+	private void initrun(int size) throws InterruptedException, ExecutionException {
 		matrixA = createRndMatrix(size-1, size);
 		matrixB = createRndMatrix(size, size+1);	
-		return calculator.math(matrixA, matrixB);
 	}
 
 	/**
@@ -138,7 +128,7 @@ public class MatrixSpeedUpTest {
 	 * @return Random double value
 	 */
 	private double getRndDouble() {
-		return new Random().doubles().findAny().getAsDouble();
+		return 1;
 	}
 	
     /**
