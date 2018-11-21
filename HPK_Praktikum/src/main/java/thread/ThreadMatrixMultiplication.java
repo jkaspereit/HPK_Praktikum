@@ -2,13 +2,13 @@ package thread;
 
 import util.Matrix;
 
-public class RunnableMatrixMultiplication implements Runnable{
+public class ThreadMatrixMultiplication extends Thread{
 
 	private Matrix matrixA;
 	private Matrix matrixB;
 	private double[][] result;
 	
-	public RunnableMatrixMultiplication(Matrix matirxA, Matrix matrixB) {
+	public ThreadMatrixMultiplication(Matrix matirxA, Matrix matrixB) {
 		this.matrixA = matirxA;
 		this.matrixB = matrixB;
 		result = new double[matirxA.height()][matrixB.width()];
@@ -24,16 +24,20 @@ public class RunnableMatrixMultiplication implements Runnable{
 		}		
 	}
 	
+	public double[][] get() throws InterruptedException{
+		join();
+		return result;
+	}
+	
 	
 	/**
-	 * Optional multiplication method
+	 * multiplication method
 	 * 
 	 * @param row
 	 * @param column
 	 * @return row * column
 	 */
 	protected double mult(double[] row, double[] column) {
-		
 		double result = 0; 
 		for (int i = 0; i < row.length; i++) {
 			result += row[i] * column[i];

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import calculator.DivideAndConquerMatrixCalculator;
 import calculator.ParallelMatrixCalculator;
+import calculator.SelfmadeCalculator;
 import calculator.SeriellMatrixCalculator;
 
 public class MatrixSpeedUpTest {
@@ -18,6 +19,7 @@ public class MatrixSpeedUpTest {
 	ParallelMatrixCalculator parallelCalculator;
 	SeriellMatrixCalculator seriellCalculator;
 	DivideAndConquerMatrixCalculator divideAndConquereCalculator;
+	SelfmadeCalculator selfmadeCalculator;
 	
 	double[][] matrixA;
 	double[][] matrixB;
@@ -26,7 +28,7 @@ public class MatrixSpeedUpTest {
 
 	
     public static enum MATH_FLAG {
-        SERIELL, PARALLEL, DIVIDE_CONQUERE;
+        SERIELL, PARALLEL, DIVIDE_CONQUERE, SELFMADE;
     } 
 	
 	@Before
@@ -34,12 +36,25 @@ public class MatrixSpeedUpTest {
 		seriellCalculator = new SeriellMatrixCalculator();
 		parallelCalculator = new ParallelMatrixCalculator();
 		divideAndConquereCalculator = new DivideAndConquerMatrixCalculator();
+		selfmadeCalculator = new SelfmadeCalculator();
 		parallelCalculator.init();
+	}
+	
+	@Test
+	public final void speedUpTestS() throws InterruptedException, ExecutionException {
+		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
+		System.out.println("----------------+---------------+---------------+---------------+---------------");
+
+		runSingleSpeedTest(64, 100, MATH_FLAG.SELFMADE);
+		runSingleSpeedTest(128, 50, MATH_FLAG.SELFMADE);
+		runSingleSpeedTest(256, 25, MATH_FLAG.SELFMADE);
+		runSingleSpeedTest(256, 12, MATH_FLAG.SELFMADE);
+
 	}
 
 	@Test
 	public final void speedUpTestCAC() throws InterruptedException, ExecutionException {
-		System.out.println("repetitions\t\t| dimension\t\t| seriell\t\t| parallel\t\t| speedup");
+		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
 
 		runSingleSpeedTest(64, 100, MATH_FLAG.DIVIDE_CONQUERE);
@@ -51,7 +66,7 @@ public class MatrixSpeedUpTest {
 
 	@Test
 	public final void speedUpTestP() throws InterruptedException, ExecutionException {
-		System.out.println("repetitions\t\t| dimension\t\t| seriell\t\t| parallel\t\t| speedup");
+		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
 
 		runSingleSpeedTest(64, 100, MATH_FLAG.PARALLEL);
@@ -112,6 +127,8 @@ public class MatrixSpeedUpTest {
 			return parallelCalculator.math(matrixA, matrixB);
 		case DIVIDE_CONQUERE:
 			return divideAndConquereCalculator.math(matrixA, matrixB);
+		case SELFMADE:
+			return selfmadeCalculator.math(matrixA, matrixB);
 		default:
 			return null;
 		}

@@ -33,20 +33,22 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 		List<double[][]> splitC = new ArrayList<>();
 
 		ExecutorService threadPool = Executors.newCachedThreadPool();
+		
+		ArrayList<Future<double[][]>> data = new ArrayList<>();
+		
+		data.add(startThreadMult(splitA.get(0), splitB.get(0), threadPool,1));
+		data.add(startThreadMult(splitA.get(1), splitB.get(2), threadPool,1));
+		data.add(startThreadMult(splitA.get(0), splitB.get(1), threadPool,1));
+		data.add(startThreadMult(splitA.get(1), splitB.get(3), threadPool,1));
+		data.add(startThreadMult(splitA.get(2), splitB.get(0), threadPool,1));
+		data.add(startThreadMult(splitA.get(3), splitB.get(2), threadPool,1));
+		data.add(startThreadMult(splitA.get(2), splitB.get(1), threadPool,1));
+		data.add(startThreadMult(splitA.get(3), splitB.get(3), threadPool,1));
 
-		double[][] c11 = startThreadMult(splitA.get(0), splitB.get(0), threadPool,1);
-		double[][] c12 = startThreadMult(splitA.get(1), splitB.get(2), threadPool,2);
-		double[][] c21 = startThreadMult(splitA.get(0), splitB.get(1), threadPool,3);
-		double[][] c22 = startThreadMult(splitA.get(1), splitB.get(3), threadPool,4);
-		double[][] c31 = startThreadMult(splitA.get(2), splitB.get(0), threadPool,5);
-		double[][] c32 = startThreadMult(splitA.get(3), splitB.get(2), threadPool,6);
-		double[][] c41 = startThreadMult(splitA.get(2), splitB.get(1), threadPool,7);
-		double[][] c42 = startThreadMult(splitA.get(3), splitB.get(3), threadPool,8);
-
-		splitC.add(startThreadAddition(c11, c12, threadPool).get());
-		splitC.add(startThreadAddition(c21, c22, threadPool).get());
-		splitC.add(startThreadAddition(c31, c32, threadPool).get());
-		splitC.add(startThreadAddition(c41, c42, threadPool).get());
+		splitC.add(startThreadAddition(data.get(0).get(), data.get(1).get(), threadPool).get());
+		splitC.add(startThreadAddition(data.get(2).get(), data.get(3).get(), threadPool).get());
+		splitC.add(startThreadAddition(data.get(4).get(), data.get(5).get(), threadPool).get());
+		splitC.add(startThreadAddition(data.get(6).get(), data.get(7).get(), threadPool).get());
 
 		return merge(splitC, result);
 	}
@@ -109,7 +111,7 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 		return result;
 	}
 
-	private double[][] startThreadMult(double[][] partA, double[][] partB, ExecutorService threadPool, int c)
+	private Future<double[][]> startThreadMult(double[][] partA, double[][] partB, ExecutorService threadPool, int c)
 			throws InterruptedException, ExecutionException {
 		Callable<double[][]> statThread = new Callable<double[][]>() {
 			@Override
@@ -119,11 +121,7 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 			}
 		};
 		// start thread
-		Future<double[][]> submit = threadPool.submit(statThread);
-		
-		double[][] result = submit.get();
-		
-		return result;
+		return threadPool.submit(statThread);
 	}
 
 	private Future<double[][]> startThreadAddition(double[][] partA, double[][] partB, ExecutorService threadPool)

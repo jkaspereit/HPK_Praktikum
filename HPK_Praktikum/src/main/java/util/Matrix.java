@@ -1,5 +1,7 @@
 package util;
 
+import java.util.Arrays;
+
 /**
  * a simple implementation of a matrix
  * 
@@ -60,6 +62,14 @@ public class Matrix {
 	}
 	
 	/**
+	 * is empty method
+	 * @return true if its empty
+	 */
+	public boolean isEmpty() {
+		return width()==0;
+	}
+	
+	/**
 	 * row by index
 	 * @param  index 
 	 * @return double[] row
@@ -112,6 +122,24 @@ public class Matrix {
 	 */
 	public Matrix split(MATRIX part){
 		return splitHeight(part).splitWidth(part);
+	}
+	
+	/**
+	 * Simple addition with matrix2
+	 * @param matrix2
+	 * @return new matrix
+	 */
+	public Matrix add(Matrix matrix2) {
+		if(height()!=matrix2.height()||width()!=matrix2.width()) {
+			throw new IllegalArgumentException("Wrong arguments for an addition.");
+		}
+		double[][] result = new double[height()][width()];
+		for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+			for (int index = 0; index < matrix.length; index++) {
+				result[rowIndex][index] = matrix[rowIndex][index] + matrix2.toArray()[rowIndex][index];
+			}
+		}
+		return new Matrix(result);
 	}
 	
 	/**
