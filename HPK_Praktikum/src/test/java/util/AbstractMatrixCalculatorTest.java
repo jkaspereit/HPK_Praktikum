@@ -11,10 +11,11 @@ import org.junit.Test;
 import calculator.AbstractMatrixCalculator;
 import calculator.ParallelMatrixCalculator;
 import calculator.SeriellMatrixCalculator;
+import util.MatrixSpeedUpTest.TEST_MODE;
 
 public abstract class AbstractMatrixCalculatorTest {
 	
-	final double eps = 1.E-8;
+	protected final double eps = 1.E-8;
     protected AbstractMatrixCalculator matrixCalculator;
 
     @Before
@@ -99,11 +100,16 @@ public abstract class AbstractMatrixCalculatorTest {
     }
     
     @Test
-    public final void testMathAddAZero() throws Exception {
+    public void testMathAddAZero() throws Exception {
         double[][] m1 = {{5,5},{5,5}};
         double[][] m2 = {{5,5},{5,5,5}};
         double[][] result = {{50,50,25},{50,50,25}};
         assertArrayEquals(result, calculate(m1, m2),eps);
+    }
+    
+    @Test
+    public void speedTest() throws InterruptedException, ExecutionException {
+    	new MatrixSpeedUpTest(matrixCalculator, TEST_MODE.SKIP_SERIELL).speedUpTest();
     }
     
 

@@ -9,7 +9,7 @@ public class ThreadMatrixAddition extends Thread{
 	
 	private double[][] result;
 
-	public ThreadMatrixAddition(ThreadMatrixMultiplication matirxA, ThreadMatrixMultiplication matrixB) {
+	public ThreadMatrixAddition(MultiplicationThread matirxA, MultiplicationThread matrixB) {
 		try {
 			this.matrixA = new Matrix(matirxA.get());
 			this.matrixB = new Matrix(matrixB.get());
@@ -53,9 +53,9 @@ public class ThreadMatrixAddition extends Thread{
 		result = new Matrix(m1).add(new Matrix(m2)).toArray();
 	}
 
-	public double[][] get() throws InterruptedException {
+	public Matrix get() throws InterruptedException {
 		join();
-		return result;
+		return new Matrix(result);
 	}
 
 }

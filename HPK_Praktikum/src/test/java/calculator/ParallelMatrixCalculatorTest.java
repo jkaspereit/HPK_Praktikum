@@ -1,4 +1,4 @@
-package util;
+package calculator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import calculator.AbstractMatrixCalculator;
 import calculator.ParallelMatrixCalculator;
+import util.AbstractMatrixCalculatorTest;
 
 public class ParallelMatrixCalculatorTest extends AbstractMatrixCalculatorTest{
 

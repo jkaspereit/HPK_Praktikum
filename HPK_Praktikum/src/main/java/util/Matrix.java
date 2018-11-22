@@ -1,6 +1,8 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * a simple implementation of a matrix
@@ -56,7 +58,7 @@ public class Matrix {
 	 * half width
 	 * @return width/2
 	 */
-	public int halfWidth() {
+	public int halfWidth() {		
 		if (width()%2==1) return (width()+1)/2;
 		return width()/2;
 	}
@@ -134,8 +136,8 @@ public class Matrix {
 			throw new IllegalArgumentException("Wrong arguments for an addition.");
 		}
 		double[][] result = new double[height()][width()];
-		for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
-			for (int index = 0; index < matrix.length; index++) {
+		for (int rowIndex = 0; rowIndex < height(); rowIndex++) {
+			for (int index = 0; index < width(); index++) {
 				result[rowIndex][index] = matrix[rowIndex][index] + matrix2.toArray()[rowIndex][index];
 			}
 		}

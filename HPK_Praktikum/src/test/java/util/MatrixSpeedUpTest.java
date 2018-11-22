@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import calculator.AbstractMatrixCalculator;
 import calculator.DivideAndConquerMatrixCalculator;
 import calculator.ParallelMatrixCalculator;
 import calculator.SelfmadeCalculator;
@@ -16,62 +17,38 @@ import calculator.SeriellMatrixCalculator;
 
 public class MatrixSpeedUpTest {
 
-	ParallelMatrixCalculator parallelCalculator;
+	AbstractMatrixCalculator parallelCalculator;
 	SeriellMatrixCalculator seriellCalculator;
-	DivideAndConquerMatrixCalculator divideAndConquereCalculator;
-	SelfmadeCalculator selfmadeCalculator;
+	TEST_MODE mode;
 	
 	double[][] matrixA;
 	double[][] matrixB;
 	
 	final double eps = 1.E-8;
 
+	public static enum TEST_MODE{
+		RUN_SERIELL, SKIP_SERIELL;
+	}
 	
     public static enum MATH_FLAG {
-        SERIELL, PARALLEL, DIVIDE_CONQUERE, SELFMADE;
+        SERIELL, PARALLEL;
     } 
 	
-	@Before
-	public void setUp() {
+
+	public MatrixSpeedUpTest(AbstractMatrixCalculator calculator, TEST_MODE mode) {
+		this.parallelCalculator = calculator;
+		this.mode = mode;
 		seriellCalculator = new SeriellMatrixCalculator();
-		parallelCalculator = new ParallelMatrixCalculator();
-		divideAndConquereCalculator = new DivideAndConquerMatrixCalculator();
-		selfmadeCalculator = new SelfmadeCalculator();
-		parallelCalculator.init();
 	}
 	
-	@Test
-	public final void speedUpTestS() throws InterruptedException, ExecutionException {
+	public final void speedUpTest() throws InterruptedException, ExecutionException {		
 		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
 
-		runSingleSpeedTest(64, 100, MATH_FLAG.SELFMADE);
-		runSingleSpeedTest(128, 50, MATH_FLAG.SELFMADE);
-		runSingleSpeedTest(256, 25, MATH_FLAG.SELFMADE);
-		runSingleSpeedTest(256, 12, MATH_FLAG.SELFMADE);
-
-	}
-
-	@Test
-	public final void speedUpTestCAC() throws InterruptedException, ExecutionException {
-		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
-		System.out.println("----------------+---------------+---------------+---------------+---------------");
-
-		runSingleSpeedTest(64, 100, MATH_FLAG.DIVIDE_CONQUERE);
-		runSingleSpeedTest(128, 50, MATH_FLAG.DIVIDE_CONQUERE);
-		runSingleSpeedTest(256, 25, MATH_FLAG.DIVIDE_CONQUERE);
-		runSingleSpeedTest(256, 12, MATH_FLAG.DIVIDE_CONQUERE);
-
-	}
-
-	@Test
-	public final void speedUpTestP() throws InterruptedException, ExecutionException {
-		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
-		System.out.println("----------------+---------------+---------------+---------------+---------------");
-
-		runSingleSpeedTest(64, 100, MATH_FLAG.PARALLEL);
-		runSingleSpeedTest(128, 10, MATH_FLAG.PARALLEL);
-		runSingleSpeedTest(256, 10, MATH_FLAG.PARALLEL);
+		runSingleSpeedTest(64, 100);
+		runSingleSpeedTest(128, 50);
+		runSingleSpeedTest(256, 25);
+		runSingleSpeedTest(512, 12);
 
 	}
 
@@ -86,7 +63,7 @@ public class MatrixSpeedUpTest {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	private void runSingleSpeedTest(int dim, int repetitions, MATH_FLAG flag) throws InterruptedException, ExecutionException{
+	private void runSingleSpeedTest(int dim, int repetitions) throws InterruptedException, ExecutionException{
 		
 		long finalTimeSeriell = 0;
 		long finalTimeParallel = 0;
@@ -94,21 +71,27 @@ public class MatrixSpeedUpTest {
 		for (int i = 0; i < repetitions; i++) {
 			initrun(dim);
 
-			// Seriell
-			long launchRunTime = System.currentTimeMillis();
-			double[][] expected = calculate(MATH_FLAG.SERIELL);
-			finalTimeSeriell += System.currentTimeMillis() - launchRunTime;
-
+			long launchRunTime; 
+			
 			// Parallel
 			launchRunTime = System.currentTimeMillis();
-			double[][] value = calculate(flag);
+			double[][] value = calculate(MATH_FLAG.PARALLEL);
 			finalTimeParallel += System.currentTimeMillis() - launchRunTime;
 
-			// Check
-			assertArrayEquals(expected, value, eps);
+			if(mode == TEST_MODE.RUN_SERIELL) {
+				// Seriell
+				launchRunTime = System.currentTimeMillis();
+				double[][] expected = calculate(MATH_FLAG.SERIELL);
+				finalTimeSeriell += System.currentTimeMillis() - launchRunTime;				
+				assertArrayEquals(expected, value, eps);
+			}
 		}
 		
-		System.out.println(repetitions +"\t\t\t\t|" +  dim + "\t\t\t\t| " + finalTimeSeriell+ "\t\t\t|" + finalTimeParallel +"\t\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));
+		if(mode == TEST_MODE.SKIP_SERIELL) {
+			finalTimeSeriell = getSeriellByDim(dim);
+		}
+		
+		System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));
 	}
 	
 	/**
@@ -125,10 +108,6 @@ public class MatrixSpeedUpTest {
 			return seriellCalculator.math(matrixA, matrixB);
 		case PARALLEL:
 			return parallelCalculator.math(matrixA, matrixB);
-		case DIVIDE_CONQUERE:
-			return divideAndConquereCalculator.math(matrixA, matrixB);
-		case SELFMADE:
-			return selfmadeCalculator.math(matrixA, matrixB);
 		default:
 			return null;
 		}
@@ -168,7 +147,7 @@ public class MatrixSpeedUpTest {
 	 * @return Random double value
 	 */
 	private double getRndDouble() {
-		return 1;
+		return 1; //TODO
 	}
 	
     /**
@@ -186,4 +165,19 @@ public class MatrixSpeedUpTest {
 		}		
 	}
 	
+	/**
+	 * Gets a default long time by the dimension for a seriell calculation.
+	 * @param dim Defines Dimension. 
+	 * @return long time
+	 */
+	private long getSeriellByDim(int dim) {
+		switch (dim) {
+		case 64: return 1500;
+		case 128: return 10000;
+		case 256: return 90000;
+		case 512: return 650000;
+		default:
+			return 0;
+		}
+	}
 }

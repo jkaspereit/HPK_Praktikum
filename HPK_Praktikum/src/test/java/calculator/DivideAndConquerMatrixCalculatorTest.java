@@ -1,4 +1,4 @@
-package util;
+package calculator;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -7,8 +7,9 @@ import org.junit.Test;
 
 import calculator.AbstractMatrixCalculator;
 import calculator.DivideAndConquerMatrixCalculator;
+import util.AbstractMatrixCalculatorTest;
 
-public class DivideAndConquerMatrixCalculatorTest extends AbstractMatrixCalculatorTest{
+public class DivideAndConquerMatrixCalculatorTest extends AbstractMatrixCalculatorTest {
 
 	@Override
 	protected AbstractMatrixCalculator getCalculator() {

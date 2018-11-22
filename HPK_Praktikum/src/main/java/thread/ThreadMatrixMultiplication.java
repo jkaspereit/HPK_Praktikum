@@ -2,7 +2,7 @@ package thread;
 
 import util.Matrix;
 
-public class ThreadMatrixMultiplication extends Thread{
+public class ThreadMatrixMultiplication extends MultiplicationThread{
 
 	private Matrix matrixA;
 	private Matrix matrixB;

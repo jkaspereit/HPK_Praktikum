@@ -1,4 +1,4 @@
-package util;
+package calculator;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,8 @@ import org.junit.Test;
 import calculator.AbstractDVCalculator;
 import calculator.AbstractMatrixCalculator;
 import calculator.SelfmadeCalculator;
+import util.AbstractMatrixCalculatorTest;
+import util.Matrix;
 
 public class SelfmadeCalculatorTest extends AbstractMatrixCalculatorTest{
 	
@@ -150,7 +152,14 @@ public class SelfmadeCalculatorTest extends AbstractMatrixCalculatorTest{
         double[][] expectedMatrix = {{1,1,2},{3,3,4}};
         assertArrayEquals(expectedMatrix,mergedMatrix.toArray(),eps);
 	}
-	
+
+    @Test(expected = IllegalArgumentException.class)
+    public final void testMathAddAZero() throws Exception {
+        double[][] m1 = {{5,5},{5,5}};
+        double[][] m2 = {{5,5},{5,5,5}};
+        double[][] result = {{50,50,25},{50,50,25}};
+        assertArrayEquals(result, calculate(m1, m2),eps);
+    }
 	
     /**
      * Assert Method 
