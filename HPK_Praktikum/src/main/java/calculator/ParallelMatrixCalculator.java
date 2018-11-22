@@ -15,15 +15,6 @@ import util.Matrix;
 public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
 
     ExecutorService threadPool = null;
-//	final double[][] m1 = null;
-//	final double[][] m2 = null;
-
-
-    public void init() {
-        if (threadPool == null) {
-            threadPool = Executors.newCachedThreadPool();
-        }
-    }
 
     /**
      * Parallel calculation of a matrix product.
@@ -72,29 +63,8 @@ public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
             result[i] = data.get(i).get();
         }
 
+        threadPool.shutdown();
 
         return result;
     }
-
-
-//	/**
-//	 * Creates Callable<double[]> for math() 
-//	 * 
-//	 * @param row
-//	 * @param column
-//	 * @return
-//	 */
-//	private Callable<double[]> createCallableMathParallel(double[] row, int column){
-//		return new Callable<double[]>() {
-//			@Override
-//			public double[] call() throws Exception {
-//				for (int i = 0; i < row.length; i++) {
-//					row[i] = mult(m1.row(column),m2.column(i));
-//				}
-//				return row;
-//			}
-//		};
-//	}
-
-
 }
