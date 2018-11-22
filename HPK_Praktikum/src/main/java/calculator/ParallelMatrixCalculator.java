@@ -48,6 +48,8 @@ public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
         //more threads != better speedup, set max?
         threadPool = Executors.newFixedThreadPool(result.length);
 
+        double[][] tb = transposeMatrix(matrixB);
+        
         for (int j = 0; j < result.length; j++) {
             final int column = j;
             final double[] row = result[column].clone();
@@ -55,7 +57,7 @@ public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
             Callable<double[]> startThread = () -> {
 
                 for (int i = 0; i < row.length; i++) {
-                    row[i] = mult(matrixA[column], column(matrixB, i));
+                    row[i] = mult(matrixA[column], tb[i]);
                 }
                 return row;
 

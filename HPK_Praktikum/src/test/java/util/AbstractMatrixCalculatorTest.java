@@ -109,7 +109,7 @@ public abstract class AbstractMatrixCalculatorTest {
     
     @Test
     public void speedTest() throws InterruptedException, ExecutionException {
-    	new MatrixSpeedUpTest(matrixCalculator, TEST_MODE.SKIP_SERIELL).speedUpTest();
+    	new MatrixSpeedUpTest(matrixCalculator, TEST_MODE.RUN_SERIELL).speedUpTest();
     }
     
 

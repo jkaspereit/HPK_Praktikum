@@ -49,6 +49,8 @@ public class MatrixSpeedUpTest {
 		runSingleSpeedTest(128, 50);
 		runSingleSpeedTest(256, 25);
 		runSingleSpeedTest(512, 12);
+		runSingleSpeedTest(1024, 1);
+		runSingleSpeedTest(2048, 1);
 
 	}
 
@@ -90,8 +92,11 @@ public class MatrixSpeedUpTest {
 		if(mode == TEST_MODE.SKIP_SERIELL) {
 			finalTimeSeriell = getSeriellByDim(dim);
 		}
-		
-		System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));
+		if(finalTimeSeriell > 100000) {
+			System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t|" + ((double) finalTimeSeriell/finalTimeParallel));			
+		}else {
+			System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));		
+		}
 	}
 	
 	/**
@@ -176,6 +181,7 @@ public class MatrixSpeedUpTest {
 		case 128: return 10000;
 		case 256: return 90000;
 		case 512: return 650000;
+		case 1024: return 825000;
 		default:
 			return 0;
 		}

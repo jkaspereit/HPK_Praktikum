@@ -25,11 +25,13 @@ public class SeriellMatrixCalculator extends AbstractMatrixCalculator{
 		// init math
 		double[][] result = initMath(matrixA, matrixB);
 		
+		double[][] tB = transposeMatrix(matrixB);
+		
 		// multiplication 
 		for (int j = 0; j < result.length; j++) {
 			for (int i = 0; i < result[j].length; i++) {
 				// ( m1 row j )  * ( m2 column i )
-				result[j][i] = mult(matrixA[j], column(matrixB, i));
+				result[j][i] = mult(matrixA[j], tB[i]);
 			}
 		}
 		
