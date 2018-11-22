@@ -49,7 +49,8 @@ public class MatrixSpeedUpTest {
 		runSingleSpeedTest(128, 50);
 		runSingleSpeedTest(256, 25);
 		runSingleSpeedTest(512, 12);
-		runSingleSpeedTest(1024, 1);
+		runSingleSpeedTest(1024, 2);
+		runSingleSpeedTest(1536, 1);
 		runSingleSpeedTest(2048, 1);
 
 	}

@@ -46,7 +46,7 @@ public class ParallelMatrixCalculator extends AbstractMatrixCalculator {
         ArrayList<Future<double[]>> data = new ArrayList<>();
 
         //more threads != better speedup, set max?
-        threadPool = Executors.newFixedThreadPool(result.length);
+        threadPool = Executors.newCachedThreadPool();
 
         double[][] tb = transposeMatrix(matrixB);
         
