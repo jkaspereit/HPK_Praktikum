@@ -1,26 +1,25 @@
 package calculator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.DoubleStream;
 
-import org.antlr.v4.codegen.model.dbg;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import calculator.AbstractMatrixCalculator;
-import calculator.ParallelMatrixCalculator;
+import util.AbstractMatrixCalculator;
 import util.AbstractMatrixCalculatorTest;
+import util.MatrixSpeedUpTest;
+import util.MatrixSpeedUpTest.TEST_MODE;
 
 public class ParallelMatrixCalculatorTest extends AbstractMatrixCalculatorTest{
 
 	@Override
 	protected AbstractMatrixCalculator getCalculator() {
-		return new ParallelMatrixCalculator();
+		return new MathParallelCalculator();
 	}
-
+	
+	@Test
+	public void speedTest() throws InterruptedException, ExecutionException {
+		MatrixSpeedUpTest test = new MatrixSpeedUpTest(matrixCalculator);
+		test.speedUpTest(TEST_MODE.RUN_SERIELL,  "parallel");
+	}
+	
 }

@@ -14,18 +14,20 @@ import org.stringtemplate.v4.compiler.CodeGenerator.region_return;
 
 import com.ibm.icu.util.BytesTrie.Result;
 
+import util.AbstractMatrixCalculator;
 import util.Matrix;
 
-public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
+public class DivideAndConquerCalculator extends AbstractMatrixCalculator {
 
 	public double[][] math(double[][] matrixA, double[][] matrixB) throws InterruptedException, ExecutionException {
+
+		// init math
+		double[][] result = createResultMatrix(matrixA, matrixB);
 
 		if (matrixA[0].length != matrixB.length) { // check size
 			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
 		}
 
-		// init math
-		double[][] result = initMath(matrixA, matrixB);
 
 		List<double[][]> splitA = split(matrixA);
 		List<double[][]> splitB = split(matrixB);
@@ -36,14 +38,14 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 		
 		ArrayList<Future<double[][]>> data = new ArrayList<>();
 		
-		data.add(startThreadMult(splitA.get(0), splitB.get(0), threadPool,1));
-		data.add(startThreadMult(splitA.get(1), splitB.get(2), threadPool,1));
-		data.add(startThreadMult(splitA.get(0), splitB.get(1), threadPool,1));
-		data.add(startThreadMult(splitA.get(1), splitB.get(3), threadPool,1));
-		data.add(startThreadMult(splitA.get(2), splitB.get(0), threadPool,1));
-		data.add(startThreadMult(splitA.get(3), splitB.get(2), threadPool,1));
-		data.add(startThreadMult(splitA.get(2), splitB.get(1), threadPool,1));
-		data.add(startThreadMult(splitA.get(3), splitB.get(3), threadPool,1));
+		data.add(startThreadMult(splitA.get(0), splitB.get(0), threadPool));
+		data.add(startThreadMult(splitA.get(1), splitB.get(2), threadPool));
+		data.add(startThreadMult(splitA.get(0), splitB.get(1), threadPool));
+		data.add(startThreadMult(splitA.get(1), splitB.get(3), threadPool));
+		data.add(startThreadMult(splitA.get(2), splitB.get(0), threadPool));
+		data.add(startThreadMult(splitA.get(3), splitB.get(2), threadPool));
+		data.add(startThreadMult(splitA.get(2), splitB.get(1), threadPool));
+		data.add(startThreadMult(splitA.get(3), splitB.get(3), threadPool));
 
 		splitC.add(startThreadAddition(data.get(0).get(), data.get(1).get(), threadPool).get());
 		splitC.add(startThreadAddition(data.get(2).get(), data.get(3).get(), threadPool).get());
@@ -111,7 +113,7 @@ public class DivideAndConquerMatrixCalculator extends AbstractMatrixCalculator {
 		return result;
 	}
 
-	private Future<double[][]> startThreadMult(double[][] partA, double[][] partB, ExecutorService threadPool, int c)
+	private Future<double[][]> startThreadMult(double[][] partA, double[][] partB, ExecutorService threadPool)
 			throws InterruptedException, ExecutionException {
 		Callable<double[][]> statThread = new Callable<double[][]>() {
 			@Override

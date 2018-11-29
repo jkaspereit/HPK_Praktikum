@@ -1,9 +1,8 @@
-package calculator;
+package util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import util.Matrix;
 import util.Matrix.MATRIX;
 
 public abstract class AbstractDVCalculator extends AbstractMatrixCalculator{

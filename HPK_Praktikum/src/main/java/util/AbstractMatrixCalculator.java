@@ -1,33 +1,41 @@
-package calculator;
+package util;
 
 import java.util.concurrent.ExecutionException;
-
-import util.Matrix;
 
 public abstract class AbstractMatrixCalculator {
 	
 	public abstract double[][] math(double[][] matrixA, double[][] matrixB) throws InterruptedException, ExecutionException;
 	
-
+	@Override
+	public String toString() {
+		return "calculator";
+	}
+	
+	
 	/**
-	 * Optional multiplication method
+	 * vektor multiplication method 
 	 * 
-	 * @param row
-	 * @param column
-	 * @return row * column
+	 * @param vektorA
+	 * @param vektorB
+	 * @return vektorA * vektorB
 	 */
-	protected double mult(double[] row, double[] column) {
-		
+	protected double vektorMultiplikation(double[] vektorA, double[] vektorB) {		
 		double result = 0; 
-		for (int i = 0; i < row.length; i++) {
-			result += row[i] * column[i];
+		for (int i = 0; i < vektorA.length; i++) {
+			result += vektorA[i] * vektorB[i];
 		}
 		return result;
 	}
 	
+	/**
+	 * Addition of matrixA and matrixB
+	 * @param matrixA
+	 * @param matrixB
+	 * @return matrixA + matrixB
+	 */
 	protected double[][] add(double[][] matrixA, double[][] matrixB) {
 		
-		double[][] result = initMath(matrixA, matrixB);
+		double[][] result = new double[matrixA.length][matrixA[0].length];
 		
 		if(matrixA.length != matrixB.length || matrixA[0].length != matrixB[0].length ){
 			throw new IllegalArgumentException("Addiotion failed.!");
@@ -49,10 +57,18 @@ public abstract class AbstractMatrixCalculator {
 	 * @param matrixB
 	 * @return double[][] result
 	 */
-	protected double[][] initMath(double[][] matrixA, double[][] matrixB){
+	protected double[][] createResultMatrix(double[][] matrixA, double[][] matrixB){
 		if(matrixA == null || matrixB == null) {
 			throw new IllegalArgumentException("Null is not valid argument!");
 		}
+		
+		if(isEmptyMatrix(matrixA) || isEmptyMatrix(matrixB)) {
+			throw new IllegalArgumentException("Empty Matrix not allowed!");
+		}
+		
+        if (matrixA[0].length != matrixB.length) { // check size
+            throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
+        }
 		
 		// init result matrix
 		return new double[matrixA.length][matrixB[0].length];
@@ -67,29 +83,16 @@ public abstract class AbstractMatrixCalculator {
 		return matrix.length==0 || matrix[0].length == 0;
 	}
 	
-	
 	/**
-	 * column by index
-	 * @param  index 
-	 * @return double[] column
+	 * Transpose Matrix 
+	 * @param matrix
+	 * @return matrix transposed
 	 */
-	protected double[] column(double[][] matrix, int column) {
-		double[] result = new double[matrix.length];
-		for (int j = 0; j < matrix.length; j++) {
-			for (int i = 0; i < matrix[j].length; i++) {
-				if(i == column) {
-					result[j] = matrix[j][i];					
-				}
-			}
-		}
-		return  result;
-	}
-	
-    public static double[][] transposeMatrix(double [][] m){
-        double[][] temp = new double[m[0].length][m.length];
-        for (int i = 0; i < m.length; i++)
-            for (int j = 0; j < m[0].length; j++)
-                temp[j][i] = m[i][j];
+    public static double[][] transposeMatrix(double [][] matrix){
+        double[][] temp = new double[matrix[0].length][matrix.length];
+        for (int i = 0; i < matrix.length; i++)
+            for (int j = 0; j < matrix[0].length; j++)
+                temp[j][i] = matrix[i][j];
         return temp;
     }
 	

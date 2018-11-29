@@ -27,6 +27,18 @@ public class Matrix {
 	}	
 	
 	/**
+	 * Transponsed Matrix
+	 * @return new Matrix
+	 */
+	public Matrix transponse() {
+        double[][] result = new double[matrix[0].length][matrix.length];
+        for (int i = 0; i < matrix.length; i++)
+            for (int j = 0; j < matrix[0].length; j++)
+                result[j][i] = matrix[i][j];
+        return new Matrix(result);
+	}
+	
+	/**
 	 * height of the matrix
 	 * 
 	 * @return height

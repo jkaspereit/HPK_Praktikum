@@ -2,23 +2,26 @@ package calculator;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
-import calculator.AbstractMatrixCalculator;
-import calculator.DivideAndConquerMatrixCalculator;
+import calculator.DivideAndConquerCalculator;
+import util.AbstractMatrixCalculator;
 import util.AbstractMatrixCalculatorTest;
+import util.MatrixSpeedUpTest;
+import util.MatrixSpeedUpTest.TEST_MODE;
 
 public class DivideAndConquerMatrixCalculatorTest extends AbstractMatrixCalculatorTest {
 
 	@Override
 	protected AbstractMatrixCalculator getCalculator() {
-		return new DivideAndConquerMatrixCalculator();
+		return new DivideAndConquerCalculator();
 	}
 	
 	@Test
     public final void testSplit() throws Exception {
-        Method method = DivideAndConquerMatrixCalculator.class.getDeclaredMethod("split", double[][].class);
+        Method method = DivideAndConquerCalculator.class.getDeclaredMethod("split", double[][].class);
         method.setAccessible(true);
         double[][] matrix = {{1,1,2,2},{1,1,2,2},{3,3,4,4},{3,3,4,4}};
         Object[] parameters = {matrix};
@@ -34,4 +37,13 @@ public class DivideAndConquerMatrixCalculatorTest extends AbstractMatrixCalculat
         assertArrayEquals(split.get(2), m3,eps);
         assertArrayEquals(split.get(3), m4,eps);
     }
+
+
+	@Test
+	public void speedTest() throws InterruptedException, ExecutionException {
+		MatrixSpeedUpTest test = new MatrixSpeedUpTest(matrixCalculator);
+		test.speedUpTest(TEST_MODE.RUN_SERIELL,  "div&con");
+	}
+	
+	
 }

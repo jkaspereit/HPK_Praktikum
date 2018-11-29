@@ -2,8 +2,8 @@ package calculator;
 
 import java.util.concurrent.ExecutionException;
 
-import calculator.AbstractMatrixCalculator;
 import calculator.SeriellMatrixCalculator;
+import util.AbstractMatrixCalculator;
 import util.AbstractMatrixCalculatorTest;
 
 public class SeriellMatrixCalculatorTest extends AbstractMatrixCalculatorTest {
@@ -13,10 +13,5 @@ public class SeriellMatrixCalculatorTest extends AbstractMatrixCalculatorTest {
 		return new SeriellMatrixCalculator();
 	}
 	
-	@Override
-	public void speedTest() throws InterruptedException, ExecutionException {
-		// no speedUp Expected.
-	}
-
 
 }

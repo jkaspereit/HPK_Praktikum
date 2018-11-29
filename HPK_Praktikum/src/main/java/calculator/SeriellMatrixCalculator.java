@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import antlr.LibExprParser.StatContext;
+import util.AbstractMatrixCalculator;
 import util.Matrix;
 
 public class SeriellMatrixCalculator extends AbstractMatrixCalculator{
@@ -23,15 +24,19 @@ public class SeriellMatrixCalculator extends AbstractMatrixCalculator{
 		}
 		
 		// init math
-		double[][] result = initMath(matrixA, matrixB);
-		
-		double[][] tB = transposeMatrix(matrixB);
+		double[][] result = new double[matrixA.length][matrixB[0].length];
 		
 		// multiplication 
 		for (int j = 0; j < result.length; j++) {
 			for (int i = 0; i < result[j].length; i++) {
 				// ( m1 row j )  * ( m2 column i )
-				result[j][i] = mult(matrixA[j], tB[i]);
+				
+				double temp = 0; 
+				for (int k = 0; k < matrixB.length; k++) {
+					temp += matrixA[j][k] * matrixB[k][i];
+				}
+				
+				result[j][i] = temp;
 			}
 		}
 		

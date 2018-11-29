@@ -5,20 +5,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import calculator.AbstractMatrixCalculator;
-import calculator.DivideAndConquerMatrixCalculator;
-import calculator.ParallelMatrixCalculator;
-import calculator.SelfmadeCalculator;
 import calculator.SeriellMatrixCalculator;
 
 public class MatrixSpeedUpTest {
 
 	AbstractMatrixCalculator parallelCalculator;
 	SeriellMatrixCalculator seriellCalculator;
+	
 	TEST_MODE mode;
 	
 	double[][] matrixA;
@@ -35,20 +28,22 @@ public class MatrixSpeedUpTest {
     } 
 	
 
-	public MatrixSpeedUpTest(AbstractMatrixCalculator calculator, TEST_MODE mode) {
+	public MatrixSpeedUpTest(AbstractMatrixCalculator calculator) {
 		this.parallelCalculator = calculator;
-		this.mode = mode;
 		seriellCalculator = new SeriellMatrixCalculator();
 	}
 	
-	public final void speedUpTest() throws InterruptedException, ExecutionException {		
-		System.out.println("repetitions\t| dimension\t| seriell\t| parallel\t| speedup");
+	public final void speedUpTest(TEST_MODE mode, String calculator) throws InterruptedException, ExecutionException {		
+		System.out.println("repetitions\t| dimension\t| seriell\t| " + calculator + "\t| speedup");
 		System.out.println("----------------+---------------+---------------+---------------+---------------");
 
+		this.mode = mode;
+		
 		runSingleSpeedTest(64, 100);
 		runSingleSpeedTest(128, 50);
 		runSingleSpeedTest(256, 25);
 		runSingleSpeedTest(512, 12);
+		runSingleSpeedTest(768, 5);
 		runSingleSpeedTest(1024, 2);
 		runSingleSpeedTest(1536, 1);
 		runSingleSpeedTest(2048, 1);
@@ -94,9 +89,9 @@ public class MatrixSpeedUpTest {
 			finalTimeSeriell = getSeriellByDim(dim);
 		}
 		if(finalTimeSeriell > 100000) {
-			System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t|" + ((double) finalTimeSeriell/finalTimeParallel));			
+			System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell + "\t|" + finalTimeParallel +"\t\t|" + round(((double) finalTimeSeriell/finalTimeParallel)));			
 		}else {
-			System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + ((double) finalTimeSeriell/finalTimeParallel));		
+			System.out.println(repetitions +"\t\t|" +  dim + "\t\t| " + finalTimeSeriell+ "\t\t|" + finalTimeParallel +"\t\t|" + round(((double) finalTimeSeriell/finalTimeParallel)));		
 		}
 	}
 	
@@ -140,10 +135,11 @@ public class MatrixSpeedUpTest {
 	 * @param matrix double[][] 
 	 */
 	private double[][] createRndMatrix(int height, int width) {
+		Random rnd = new Random();
 		double[][] matrix = new double[height][width];
 		for (int j = 0; j < matrix.length; j++) {
 			for (int i = 0; i < matrix[0].length ; i++) {
-				matrix[j][i] = getRndDouble();
+				matrix[j][i] = getRndDouble(rnd);
 			}
 		}
 		return matrix;
@@ -152,8 +148,8 @@ public class MatrixSpeedUpTest {
 	/**
 	 * @return Random double value
 	 */
-	private double getRndDouble() {
-		return 1; //TODO
+	private double getRndDouble(Random rnd) {
+		return rnd.nextDouble();
 	}
 	
     /**
@@ -186,5 +182,9 @@ public class MatrixSpeedUpTest {
 		default:
 			return 0;
 		}
+	}
+	
+	public double round(double zahl) {
+		return Math.round( zahl * 100 ) / 100.0;
 	}
 }
