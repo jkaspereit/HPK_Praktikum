@@ -8,7 +8,10 @@
 
 #ifndef INTEGRATOR_H_
 #define INTEGRATOR_H_
-#include "Function.h"
+
+#include "../function/Function.h"
+#include "Convergence.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,7 +24,7 @@ extern "C" {
  * @param eps precission
  * @return F(b)-F(a)
  */
-double integrate(Function& f, double a, double b, double eps);
+double integrate(Function &f, double a, double b, double eps);
 #ifdef __cplusplus
 }
 #endif

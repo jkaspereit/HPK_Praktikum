@@ -8,7 +8,10 @@
 
 #ifndef DIFFERENTIATOR_H_
 #define DIFFERENTIATOR_H_
-#include "Function.h"
+
+#include "../function/Function.h"
+#include "Convergence.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,7 +21,7 @@ extern "C" {
  * @param x argument
  * @return value f'(x)
  */
-double differentiate(Function& f, double x, double err);
+double differentiate(Function &f, double x, double err);
 
 #ifdef __cplusplus
 }
