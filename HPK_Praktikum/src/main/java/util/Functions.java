@@ -1,5 +1,7 @@
 package util;
 
+import de.lab4inf.wrb.Function;
+
 import java.util.Arrays;
 
 public enum Functions {

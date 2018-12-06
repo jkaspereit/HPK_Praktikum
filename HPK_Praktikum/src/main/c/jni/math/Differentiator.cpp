@@ -2,36 +2,58 @@
 // Created by sisi on 05.12.18.
 //
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "Differentiator.h"
+#include "../function/Function.h"
+#include "Convergence.cpp"
 
-double calcDelta(Function &f, double h, double x) {
 
+int difCalls = 0;
+
+int getDifCalls() {
+    return difCalls;
+}
+
+void setDifCalls(int calls) {
+    difCalls = calls;
+}
+
+double d(Function &f, double h, double x) {
+    difCalls += 2;
     return f(x + h) - f(x - h);
 }
 
-double differentiateSimple(Function &f, double x, double err) {
-    double h = 0.1e-5;
-
-    double result = ((f(x + h) - f(x - h)) / (2 * h));
-    return result;
+double fh(Function &f, double h, double x) {
+    double t1 = 8 * d(f, h, x);
+    double t2 = d(f, 2 * h, x);
+    double dn = 12 * h;
+    return (t1 - t2) / dn;
 }
 
+
 double differentiate(Function &f, double x, double err) {
-    double delta = 0, deltaOld, derivH = 0, deriv2H, ret = 0, retOld;
-    double h = 1.e-1;
-    int count = 0;
+    int calls = 0;
+    double oldDelta, delta;
+    double h = 1.E-1;
+
+    difCalls = 0;
+    int counter = 0;
+    double oldFh, fh;
+    double oldRes, res;
 
     do {
-        count++;
-        deltaOld = delta;
-        delta = calcDelta(f, h, x);
-        deriv2H = derivH;
-        derivH = (8 * delta - deltaOld) / (12 * h);
-        retOld = ret;
-        ret = (16 * derivH - deriv2H) / 15;
+        calls++;
+        oldDelta = delta;
+        delta = d(f, h, x);
+        oldFh = fh;
+        fh = (8 * delta - oldDelta) / (12 * h);
+        oldRes = res;
+        res = (16 * fh - oldFh) / 15;
         h *= 0.5;
-    } while (!convergence(ret, retOld, count, err));
+        counter++;
+    } while (convergence(res, oldRes, counter, err) == 0);
 
-
-    return ret;
+    return res;
 }

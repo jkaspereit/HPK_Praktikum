@@ -58,7 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.antlr.v4.runtime.LexerNoViableAltException;
+import de.lab4inf.wrb.Script;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,7 +67,7 @@ import org.junit.Test;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import util.Function;
+import de.lab4inf.wrb.Function;
 
 /**
  * Test of the WRB-Script language.

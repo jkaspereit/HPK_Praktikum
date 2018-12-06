@@ -28,7 +28,6 @@ public class DivideAndConquerCalculator extends AbstractMatrixCalculator {
 			throw new IllegalArgumentException("The number of columns must be equal to the number of rows!");
 		}
 
-
 		List<double[][]> splitA = split(matrixA);
 		List<double[][]> splitB = split(matrixB);
 

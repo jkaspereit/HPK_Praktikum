@@ -19,7 +19,9 @@
  *
  */
 
-package util;
+package de.lab4inf.wrb;
+
+import de.lab4inf.wrb.Function;
 
 import java.util.logging.Logger;
 
@@ -35,9 +37,7 @@ public class Integrator {
     private double eps = 1.E-9;
     static {
         try {
-            // String libName = "HPK-CPP";
-            String libName = "WRB4";
-            System.loadLibrary(libName);
+            System.load(System.getProperty("user.dir") + "/lib/libIntegrator.so");
         } catch (Throwable error) {
             logger.severe("LibPath: " + System.getProperty("java.library.path"));
             logger.severe("native lib loading failed " + error);
@@ -82,5 +82,6 @@ public class Integrator {
     public void setEps(double eps) {
         this.eps = eps;
     }
-
 }
+
+

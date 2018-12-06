@@ -19,7 +19,7 @@
  *
  */
 
-package util;
+package de.lab4inf.wrb;
 
 /**
  * Simple real valued function interface. Since JDK1.8
@@ -33,7 +33,7 @@ package util;
 public interface Function {
     /**
      * Function evaluation mapping tuple (x1,...,xn) to y = f(x1,...,xn).
-     * 
+     *
      * @param args
      *            the double array tuple x1,...,xn
      * @return y = f(x1,...,xn)

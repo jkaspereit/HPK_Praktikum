@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Set;
 
+import de.lab4inf.wrb.Script;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,7 +15,7 @@ import antlr.BaseVisitor;
 import antlr.LibExprLexer;
 import antlr.LibExprParser;
 import error.IllegalArgumentExceptionListener;
-import util.Function;
+import de.lab4inf.wrb.Function;
 
 public class WRBScript implements Script {
 

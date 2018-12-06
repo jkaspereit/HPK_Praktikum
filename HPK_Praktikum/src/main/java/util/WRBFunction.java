@@ -3,9 +3,9 @@ package util;
 import java.util.HashMap;
 import java.util.List;
 
+import de.lab4inf.wrb.Function;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import antlr.BaseVisitor;
 import application.WRBScript;
 
 public class WRBFunction implements Function {

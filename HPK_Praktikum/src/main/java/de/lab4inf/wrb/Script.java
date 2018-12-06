@@ -19,13 +19,11 @@
  *
  */
 
-package application;
+package de.lab4inf.wrb;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
-
-import util.Function;
 
 /**
  * Common interface for the WRB parsing service. A script allows to define and 
